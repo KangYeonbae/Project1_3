@@ -1,0 +1,12 @@
+/* edust.css */
+.iframe-transition {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.iframe-visible {
+    opacity: 1;
+}
+
+.iframe-hidden {
+    opacity: 0;
+}

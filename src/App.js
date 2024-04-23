@@ -10,6 +10,7 @@ import Chatbot from "./router/chatbot";
 import {TiWeatherWindyCloudy} from "react-icons/ti";
 import LoginPage from "./router/login";
 import LogoutPage from "./router/logout";
+import AutoSwitchingViewer from "./router/edust"
 
 function App() {
 
@@ -59,11 +60,10 @@ function App() {
 
     const [selectedSido, setSelectedSido] = useState(null);
     const [sidos, setSidos] = useState([
-        '강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시',
-        '대전광역시', '부산광역시', '서울특별시', '인천광역시', '울산광역시',
-        '전라남도', '전라북도', '제주특별자치도', '충청남도'
+        '강원도', '경기도', '경상도', '광주', '대구',
+        '대전', '부산', '서울', '인천', '울산',
+        '전라도', '제주', '충청도'
     ]);
-
 
     const handleSidoSelection = (sido) => {
         // 현재 선택된 지역이 다시 클릭되면 선택 해제
@@ -73,6 +73,20 @@ function App() {
             setSelectedSido(sido);
         }
     };
+
+    // 시도 지역페이지나누기
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 9; // 한 페이지당 9개의 항목을 표시
+    const maxPage = Math.ceil(sidos.length / itemsPerPage) - 1;
+
+    // 페이지를 변경하는 함수
+    const goToNextPage = () => setCurrentPage((page) => Math.min(page + 1, maxPage));
+    const goToPrevPage = () => setCurrentPage((page) => Math.max(page - 1, 0));
+
+    // 현재 페이지에 맞는 항목의 범위 계산
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = sidos.slice(startIndex, endIndex);
 
 
 
@@ -122,7 +136,7 @@ function App() {
                 <h1><TiWeatherWindyCloudy/><NavLink to="/"> 에리허브</NavLink></h1>
                 <nav className="nav-links">
                     <NavLink to ='/forgine'>대기질현황</NavLink>
-                    <NavLink to="/forgine">대기오염예보</NavLink>
+                    <NavLink to="/edust">대기오염예보</NavLink>
                 </nav>
                 <div className="nav-info">
                     <span>{formatDate}</span>
@@ -151,12 +165,22 @@ function App() {
                         <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
                     </div>
                     {currentView === 'sidos' && (
+                        <div>
                         <div className="senter-marker">
-                            {sidos.map((sido, index) => (
+                              {currentItems.map((sido) => (
                                 <button key={sido} onClick={() => handleSidoSelection(sido)}>
                                     {sido}
                                 </button>
                             ))}
+                            </div>
+                            <div className="pagination">
+                                <button onClick={goToPrevPage} disabled={currentPage === 0}>
+                                    이전
+                                </button>
+                                <button onClick={goToNextPage} disabled={currentPage === maxPage}>
+                                    다음
+                                </button>
+                            </div>
                         </div>
                     )}
                     {currentView === 'zeroWastes' && (
@@ -211,14 +235,13 @@ function App() {
                         <p> 지금 바로 이 웹 페이지를 통해 우리의 환경을 위한 첫걸음을 내딛어보세요. 함께라면 가능합니다!</p>
                     </div>}/>
                     <Route path="/forgine"
-                           element={<Forgine selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste}
-                                             zeroWastes={zeroWastes} selectMark={selectMark}/>}/>
+                           element={<Forgine selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark}/>}/>
                     <Route path="/MyMap"
-                           element={<MyMap selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste}
-                                           zeroWastes={zeroWastes} selectMark={selectMark}/>}/>
+                           element={<MyMap selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark}/>}/>
                     <Route path="/login"
                            element={<LoginPage setLoginStatus={setIsLogin} setLoginUser={setLogin} />}/>
                     <Route path="/logout" element={<LogoutPage/>}/>
+                    <Route path="/edust" element={<AutoSwitchingViewer/>}/>
                 </Routes>
             </section>
 

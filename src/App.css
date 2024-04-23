@@ -73,7 +73,7 @@ body {
 
 .sidebar {
   flex-basis: 400px; /* 기본 사이드바 너비 설정 */
-  height: 100vh; /* 화면의 전체 높이 */
+  height: calc(100vh - 140px); /* 화면의 전체 높이 */
   background: #16a085;
   margin-top: 140px;
   /* 기타 스타일 */
@@ -87,8 +87,8 @@ body {
 
 
 .Map {
-  width: calc(100vw - 419px); /* 사이드바의 너비를 고려한 지도의 너비 */
-  height: 100vh; /* 전체 높이 */
+  width: calc(100vw - 400px); /* 사이드바의 너비를 고려한 지도의 너비 */
+  height: calc(100vh - 140px); /* 전체 높이 */
   float: left; /* 사이드바 옆에 표시 */
 }
 
@@ -115,6 +115,7 @@ body {
   background: none;
   border: none;
   color: #fff;
+  cursor: pointer;
 
 }
 .sidebar svg {
@@ -135,6 +136,7 @@ body {
   width: 120px;
   background: white;
   margin-top: 30px;
+  cursor: pointer;
 }
 
 .small_nav{
@@ -149,6 +151,7 @@ body {
   padding: 10px;
   border-radius: 10px;
   color : #16a085;
+  cursor: pointer;
 
 }
 
@@ -159,6 +162,7 @@ body {
   border-radius: 10px;
   color : #16a085;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .sub {
@@ -264,10 +268,12 @@ body {
   align-items: center;
   text-align: center;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .senter-marker button:hover{
   background-color: #A2E1D4; /* 호버 상태의 배경색 변경 */
+  cursor: pointer;
 }
 
 .Info {
@@ -292,6 +298,28 @@ body {
 .Info p {
   color: #666; /* 본문 텍스트 색상 */
   line-height: 1.6; /* 줄간격 */
+}
+
+.pagination{
+  clear: none;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+.pagination button{
+  width: 50px;
+  height: 30px;
+  background-color: white;
+  color: #3FBFAD;
+  border-radius: 10px;;
+  display: inline-block;
+  margin: 0 10px;
+  cursor: pointer;
+}
+.pagination button:hover{
+  background-color: #f4f4f4;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* 모바일 화면에서 네비게이션 스타일 */
