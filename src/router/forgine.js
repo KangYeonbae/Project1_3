@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import MyMap from "./KakaoMap";
 import { Link, useNavigate } from 'react-router-dom';
-import { IoLogoWechat } from "react-icons/io5";
 
-function Forgine({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
+function Forgine({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerClick, onZeroClick, setOpenZero, onNapronClick, setNapronOpen}) {
     let navigate = useNavigate();
     let [chatbot, setChatbot] = useState(false)
 
@@ -12,7 +11,8 @@ function Forgine({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
 
     return (
             <div className="Map">
-                <MyMap selectedSido={selectedSido} sidos={sidos} selectZeroWaste={selectZeroWaste} zeroWastes={zeroWastes}/> {/* selectedSido prop 전달 */}
+                <MyMap selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark} setReashop={setReashop}
+                       setOpenZero={setOpenZero} onMarkerClick={onMarkerClick} onZeroClick={onZeroClick} onNapronClick={onNapronClick} setNapronOpen={setNapronOpen} /> {/* selectedSido prop 전달 */}
             </div>
     );
 }

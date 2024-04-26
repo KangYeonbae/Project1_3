@@ -3,61 +3,26 @@ import React, { useEffect, useState } from "react";
 import proj4 from 'proj4';
 import "bootstrap/js/dist/collapse";
 import "../css/KakaoMap.css";
-import collapse from "bootstrap/js/src/collapse";
 
 
-function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
+function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerClick, onZeroClick, setOpenZero, onNapronClick,  setNapronOpen}) {
     /* global kakao */
     const [traffic, setTraffic] = useState(false);
     const [mapTypeId, setMapTypeId] = useState();
-    const [markers, setMarkers] = useState([]);
-    const [showMarkers, setShowMarkers] = useState(false); // 새로운 상태 추가
 
     const [cityData, setCityData] = useState([]);
 
     const [map, setMap] = useState();
 
     const [center, setCenter] = useState({ lat: 37.558185572111356, lng: 127.00091673775184 });
-    const [isLoading, setIsLoading] = useState(true);
-
-
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const currentCenter = { lat: latitude, lng: longitude };
-                    setCenter(currentCenter);
-                    setIsLoading(false); // 현재 위치를 가져오고 로딩 상태를 false로 변경
-                },
-                (err) => {
-                    console.error("Error getting current position:", err);
-                    setIsLoading(false); // 현재 위치를 가져오지 못하면 로딩 상태를 false로 변경
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 } // 고정확도 활성화, 10초 타임아웃, 1분 최대 캐시 나이
-            );
-        } else {
-            console.error("Geolocation is not supported.");
-            setIsLoading(false); // 지원하지 않는 경우 로딩 상태를 false로 변경
-        }
-    }, []);
-
-
-
-    useEffect(() => {
-        if (map && !isLoading) {
-            map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
-        }
-    }, [map, center, isLoading]);
+    const [level, setLevel] = useState(9);
 
 
     const handleMapCreate = (map) => {
-        const initialCenter = new kakao.maps.LatLng(37.558185572111356, 127.00091673775184);
-        map.setCenter(initialCenter);
-        map.setLevel(9);
         setMap(map);
     };
 
+    const [currentPosition, setCurrentPosition] = useState(null);  // 사용자의 현재 위치를 저장할 상태
 
 // 사용자 위치로 이동하는 함수
     const moveToCurrentLocation = () => {
@@ -66,27 +31,30 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
             return;
         }
 
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            const newCenter = new kakao.maps.LatLng(latitude, longitude);
-            if (map) {
-                map.setCenter(newCenter);
-                map.setLevel(3);
-            }
-        }, error => {
-            console.error("Error fetching current location:", error);
-            alert("현재 위치를 가져올 수 없습니다.");
-        }, { enableHighAccuracy: true });
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                const newCenter = { lat: latitude, lng: longitude };
+                setCenter(newCenter);
+                setCurrentPosition(newCenter);  // 현재 위치를 상태에 저장
+                setLevel(3);  // 줌 레벨 조정
+            },
+            (error) => {
+                console.error("Error fetching current location:", error);
+                alert("현재 위치를 가져올 수 없습니다.");
+            },
+            { enableHighAccuracy: true }
+        );
     };
 
 
-
     useEffect(() => {
-        if (map && !isLoading) {
-
+        if (map) {
             map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+            map.setLevel(level);
         }
-    }, [map, center, isLoading]);
+    }, [map, center, level]);
+
 
     // 교통정보 토글 함수
     const toggleTraffic = () => {
@@ -104,18 +72,6 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
         setMapTypeId(mapTypeId === "USE_DISTRICT" ? null : "USE_DISTRICT");
     };
 
-
-    // 재활용 버튼 클릭 핸들러
-    const toggleMarkers = () => {
-        if (markers.length === 0) {
-            // markers 상태에 마커가 없는 경우, 새로운 데이터를 가져와서 마커를 생성합니다.
-            fetchData();
-        } else {
-            // markers 상태에 마커가 있는 경우, 마커를 토글합니다.
-            setMarkers([]);
-        }
-        setShowMarkers(!showMarkers);
-    };
 
 
     useEffect(() => {
@@ -164,12 +120,6 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
     const [selectedArea, setSelectedArea] = useState(null);
     const [hoverArea, setHoverArea] = useState(null);
 
-    const handleMouseOver = (area) => {
-        setHoverArea(area);
-    };
-    const handleMouseOut = () => {
-        setHoverArea(null);
-    };
     const handleClick = (area) => {
         if(selectedArea && selectedArea.properties.시군구명 === area.properties.시군구명){
             setSelectedArea(null);
@@ -179,40 +129,57 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
 
     };
 
+    const [allMarkers, setAlltMarkers] = useState([]);
+    const [RMarkers, setRMarkers] = useState([]);
+
+
+    useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/newmark');
+            const response = await fetch('http://localhost:3001/recyclingcenters');
             if (!response.ok) {
                 throw new Error('Network response was not ok: ' + response.statusText);
             }
             const jsonData = await response.json();
+            console.log(jsonData)
+            setAlltMarkers(jsonData); // 전체 데이터를 상태에 저장
+            } catch (error) {
+            console.error('Error fetching data:', error);
+            }
+        };
+         fetchData();
+     }, []);
 
-            const newMarkers = jsonData.map((item, index) => {
-                const { 위도, 경도, 재활용센터명 } = item;
-                if (!위도 || !경도) {
-                    console.error('Invalid latitude or longitude:', item);
-                    return null;
-                }
-                return (
-                    <MapMarker
-                        key={index}
-                        position={{ lat: parseFloat(위도), lng: parseFloat(경도) }}
-                        title={재활용센터명}
-                    />
-                );
-            }).filter(marker => marker !== null);
-
-            console.log('Markers:', newMarkers);
-            setMarkers(newMarkers);
-        } catch (error) {
-            console.error('Error processing data:', error);
-        }
+    const MarkRules = {
+        서울: ADDRESSOLD => /서울/i.test(ADDRESSOLD || ''),
+        경기: ADDRESSOLD => /경기/i.test(ADDRESSOLD || ''),
+        인천: ADDRESSOLD => ADDRESSOLD?.toUpperCase().startsWith('인천') || false,
+        강원도: ADDRESSOLD => /강원/i.test(ADDRESSOLD || ''),
+        충청도: ADDRESSOLD => /충청/i.test(ADDRESSOLD || ''),
+        경상도: ADDRESSOLD => /경상/i.test(ADDRESSOLD || ''),
+        전라도: ADDRESSOLD => /전라/i.test(ADDRESSOLD || ''),
+        제주도: ADDRESSOLD => ADDRESSOLD?.toUpperCase().startsWith('제주') || false,
     };
 
-    // 첫 로드시 마커 데이터 가져오기
+
+
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (selectMark && allMarkers.length > 0) {
+            const matchingRule = MarkRules[selectMark];
+            if (matchingRule) {
+                const filterWaste = allMarkers.filter(item => {
+                    const result = matchingRule(item.ADDRESSOLD);
+                    return result;
+                });
+                setRMarkers(filterWaste);
+            }
+        } else {
+            setRMarkers([]);
+        }
+
+    }, [selectMark, allMarkers]);
+
+
 
     const [allData, setAllData] = useState([]); // 전체 데이터
     const [displayData, setDisplayData] = useState([]); // 화면에 표시할 데이터
@@ -220,12 +187,13 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/zero');
+                const response = await fetch('http://localhost:3001/napron');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const jsonData = await response.json();
                 setAllData(jsonData); // 전체 데이터를 상태에 저장
+                console.log(jsonData)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -234,12 +202,38 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
     }, []);
 
 
+    const sidosRules = {
+        강원도: SIDO => /(강원)/.test(SIDO),
+        경기도: SIDO => /(경기)/.test(SIDO),
+        경상도: SIDO => /(경상)/.test(SIDO),
+        광주: SIDO => /(광주)/.test(SIDO),
+        대구: SIDO => /(대구)/.test(SIDO),
+        대전: SIDO => /(대전)/.test(SIDO),
+        부산: SIDO => /(부산)/.test(SIDO),
+        서울: SIDO => /(서울)/.test(SIDO),
+        인천: SIDO => /(인천)/.test(SIDO),
+        울산: SIDO => /(울산)/.test(SIDO),
+        전라도: SIDO => /(전라)/.test(SIDO),
+        제주: SIDO => /(제주)/.test(SIDO),
+        충청도: SIDO => /(충청)/.test(SIDO),
+        // 나머지 카테고리에 대해서도 비슷한 규칙을 추가합니다.
+    };
+
+
+
 // 시도 선택 핸들러
     useEffect(() => {
-        // 시도 선택에 따른 마커 표시
+        console.log(selectedSido)
         if (selectedSido && allData.length > 0) {
-            const filteredData = allData.filter(item => item.시도 === selectedSido);
-            setDisplayData(filteredData);
+            const matchsidoData = sidosRules[selectedSido];
+            console.log(matchsidoData)
+            if(matchsidoData) {
+                const filterWaste = allData.filter(item => {
+                    const result = matchsidoData(item.SIDO);
+                    return result;
+                });
+                setDisplayData(filterWaste);
+            }
         } else {
             setDisplayData([]);  // 선택이 해제되면 마커 데이터를 비웁니다.
         }
@@ -253,11 +247,12 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
     useEffect (() => {
         const fetchData = async () => {
         try {
-            const response = await fetch('http://localhost:5000/places')
+            const response = await fetch('http://localhost:3001/zero')
             if (!response.ok) {
                 throw new Error('에러남..;;')
             }
             const jsonData = await response.json();
+            console.log(wasteAll)
             setwasteAll(jsonData);
         } catch (error) {
             console.log('제로웨이스트에러');
@@ -267,15 +262,15 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
     }, []);
 
     const categoryRules = {
-        제로마켓: name => /(남원점|신구로점)/.test(name),
-        서울: name => name.startsWith('서울'),
-        경기: name => /(고양|광명|김포|남양주|부천|분당|성남|수원|시흥|오산|용인|파주|평택|하남|화성)/.test(name),
-        인천: name => name.startsWith('인천'),
-        강원도: name => /(강릉|원주|춘천)/.test(name),
-        충청도: name => /(논산|대전|천안|태안|청주)/.test(name),
-        경상도: name => /(경주|구미|김천|김해|대구|부산|안동|양산|울산|진주|창원|통영)/.test(name),
-        전라도: name => /(광주|군산|나주|담양|순천|목포|전주)/.test(name),
-        제주도: name => name.startsWith('제주'),
+        제로마켓: NAME => /(남원점|신구로점)/.test(NAME),
+        서울: NAME => NAME.startsWith('서울'),
+        경기: NAME => /(고양|광명|김포|남양주|부천|분당|성남|수원|시흥|오산|용인|파주|평택|하남|화성)/.test(NAME),
+        인천: NAME => NAME.startsWith('인천'),
+        강원도: NAME => /(강릉|원주|춘천)/.test(NAME),
+        충청도: NAME => /(논산|대전|천안|태안|청주)/.test(NAME),
+        경상도: NAME => /(경주|구미|김천|김해|대구|부산|안동|양산|울산|진주|창원|통영)/.test(NAME),
+        전라도: NAME => /(광주|군산|나주|담양|순천|목포|전주)/.test(NAME),
+        제주도: NAME => NAME.startsWith('제주'),
         // 나머지 카테고리에 대해서도 비슷한 규칙을 추가합니다.
     };
 
@@ -284,7 +279,7 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
         if (selectZeroWaste && wasteAll.length > 0) {
             const matchingRule = categoryRules[selectZeroWaste];
             if (matchingRule) {
-                const filterWaste = wasteAll.filter(item => matchingRule(item.name));
+                const filterWaste = wasteAll.filter(item => matchingRule(item.NAME));
                 setWasteMarker(filterWaste);
             }
         } else {
@@ -298,9 +293,9 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
         >
             <Map
                 center={center}
-                className="Map"
-                level={9}
-                onCreate={handleMapCreate} // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
+                level={level}
+                onCreate={handleMapCreate}
+                className="Map" // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
             >
                 <MapTypeControl position={"TOPRIGHT"}/>
                 <ZoomControl position={"RIGHT"}/>
@@ -309,82 +304,115 @@ function MyMap({selectedSido, sidos, zeroWastes, selectZeroWaste }) {
                 {cityData.map((area, index) => (
                     <Polygon
                         key={index}
-                        path={area.geometry.coordinates[0].map(coord => ({lat: coord[1], lng: coord[0]}))}
+                        path={area.geometry.coordinates[0].map(coord => ({ lat: coord[1], lng: coord[0] }))}
                         strokeWeight={3}
                         strokeColor="#004c80"
                         strokeOpacity={0.8}
-                        fillColor={hoverArea === area ? "#09f" : "#fff"}
+                        fillColor={
+                            selectedArea === area ? "rgba(0, 0, 0, 0)" :
+                                hoverArea === area ? "#09f" :
+                                    "#fff"
+                        } // 조건부 색상 변경
                         fillOpacity={0.7}
-                        onMouseover={() => handleMouseOver(area)}
-                        onMouseout={handleMouseOut}
+                        onMouseover={() => setHoverArea(area)}
+                        onMouseout={() => setHoverArea(null)}
                         onClick={() => handleClick(area)}
                     />
                 ))}
-                {hoverArea && (
-                    <MapInfoWindow position={{
-                        lat: hoverArea.geometry.coordinates[0][0][1],
-                        lng: hoverArea.geometry.coordinates[0][0][0]
-                    }}>
-                        <div style={{width: 80, height: 30, textAlign: 'center'}}>
-                            <p>{hoverArea.properties.시군구명}</p>
-                        </div>
-                    </MapInfoWindow>
-                )}
-                {selectedArea && (
-                    <MapInfoWindow position={{
-                        lat: selectedArea.geometry.coordinates[0][0][1],
-                        lng: selectedArea.geometry.coordinates[0][0][0]
-                    }}>
-                        <div>
-                            <h3>{selectedArea.properties.시군구명}</h3>
-                            <p>Click again to close.</p>
-                        </div>
-                    </MapInfoWindow>
-                )}
 
                 {/*내위치마커*/}
-                {!isLoading && (
-                    <MapMarker position={center}
-                               draggable={true}
-                               image={{
-                                   src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
-                                   size: {
-                                       width: 24,
-                                       height: 35
-                                   }
-                               }}>
-                    </MapMarker>
+                {currentPosition && (
+                    <MapMarker
+                        position={currentPosition}
+                        image={{
+                            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+                            size: {
+                                width: 24,
+                                height: 35
+                            }
+                        }}
+                    />
                 )}
-
-                {/*재활용센터 마커*/}
-                {showMarkers && markers}
 
                 {/*로드뷰, 지형뷰등*/}
                 {mapTypeId && <MapTypeId type={mapTypeId}/>}
 
+                {/*재활용센터 마커*/}
+                {RMarkers.map((item, index) => {
+                    const lat = parseFloat(item.LATITUDE);
+                    const lng = parseFloat(item.LONGITUDE);
+
+                    return (
+                        <MapMarker
+                            key={index}
+                            image={{
+                                src: "./img/west1.png",
+                                size: {
+                                    width: 30,
+                                    height: 35,
+                                }
+                            }}
+                            position={{ lat, lng }}
+                            title={item.NAME}
+                            onClick={() =>{ onMarkerClick(item); setReashop(true)}}
+                        />
+                    );
+                })}
+
+
                 {/*네프론 마커*/}
-                {displayData.map((item, index) => (
+                {displayData.map((item, index) => {
+                    const lat = parseFloat(item.LATITUDE);
+                    const lng = parseFloat(item.LONGITUDE);
+                    return(
+
                     <MapMarker
                         key={index}
-                        position={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
-                        title={item.name}
+                        image={{
+                            src: ".\\img\\pet1.png",
+                            size: {
+                                width: 24,
+                                height: 35,
+                            }
+                        }}
+                        position={{ lat, lng }}
+                        title={item.NAME}
+                        onClick={() =>{ setNapronOpen(true); onNapronClick(item)}}
+
                     />
-                ))}
+                    );
+                })}
+
+
                 {/*제로웨이스트 마커*/}
-                {wasteMarker.map((item, index) => (
-                    <MapMarker
+                {wasteMarker.map((item, index) => {
+                    const lat = parseFloat(item.LATITUDE);
+                    const lng = parseFloat(item.LONGITUDE);
+                    return(
+
+                        <MapMarker
                     key={index}
-                    position={{ lat: parseFloat(item.latitude), lng: parseFloat(item.longitude) }}
-                    title={item.name}
+                    image={{
+                        src: ".\\img\\zero3.png",
+                        size: {
+                            width: 30,
+                            height: 35,
+                        }
+                    }}
+                    position={{ lat, lng }}
+                    title={item.NAME}
+                    onClick={() =>{ onZeroClick(item); setOpenZero(true)}}
                     />
-                ))}
+                    );
+                })}
+
             </Map>
             <div className="map-btn">
                 <ul>
                     <button onClick={toggleTraffic}>교통정보</button>
                     <button onClick={toggleRoadView}>로드뷰</button>
                     <button onClick={toggleUseDistrict}>지적편집도</button>
-                    <button onClick={toggleMarkers}>재활용센터</button>
+                    <button>길찾기</button>
                     <button onClick={moveToCurrentLocation}>내 위치</button>
                 </ul>
             </div>

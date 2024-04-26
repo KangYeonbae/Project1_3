@@ -61,6 +61,16 @@ async function verifyID(userid, password) {
     }
 }
 
+
+oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT; // 결과를 객체 형식으로 받기 위한 설정
+
+
+
+app.use('/recyclingcenters', require('./routes/recycling'))
+app.use('/napron', require('./routes/Napron'))
+app.use('/zero', require('./routes/zero'))
+
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
