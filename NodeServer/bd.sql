@@ -10,6 +10,8 @@ CREATE TABLE users (
 INSERT INTO users (id, userid, password, nickname, realname) VALUES (1, 'dusqo', '123456', '연배', '강연배');
 INSERT INTO users (id, userid, password, nickname, realname) VALUES (2, 'wldn', '1234', '지우지우', '이지우');
 
+CREATE SEQUENCE RECYCLING_CENTER_ID_SEQ START WITH 1 INCREMENT BY 1;
+
 
 CREATE TABLE recyclingcenters (
                                   ID NUMBER PRIMARY KEY,
@@ -40,7 +42,6 @@ CREATE TABLE recyclingcenters (
                                   PROVIDERNAME VARCHAR2(255)
 );
 
-CREATE SEQUENCE RECYCLING_CENTER_ID_SEQ START WITH 1 INCREMENT BY 1;
 
 CREATE OR REPLACE TRIGGER recycling_center_before_insert
 BEFORE INSERT ON recyclingcenters
@@ -49,6 +50,7 @@ BEGIN
 SELECT RECYCLING_CENTER_ID_SEQ.NEXTVAL INTO :new.ID FROM dual;
 END;
 
+CREATE SEQUENCE zero_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE ZERO (
                       id NUMBER PRIMARY KEY,
