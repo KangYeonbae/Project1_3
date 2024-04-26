@@ -11,6 +11,9 @@ import {TiWeatherWindyCloudy} from "react-icons/ti";
 import LoginPage from "./router/login";
 import LogoutPage from "./router/logout";
 import AutoSwitchingViewer from "./router/edust"
+import RecyclingCenters from "./router/sidebar"
+import ZeroCenters from "./router/zerobar"
+import NapronCenters from "./router/BarNapron"
 
 function App() {
 
@@ -54,9 +57,29 @@ function App() {
     const toDay = new Date();
     const formatDate = `${toDay.getFullYear()}-${toDay.getMonth() + 1}-${toDay.getDate()}`;
 
+    // 챗봇창 열기
     let [chatbot, setChatbot] = useState(false)
-    const [showSidos, setShowSidos] = useState(false);  // 새로운 상태 추가
 
+    // 센터들 정보창열기
+    let [reshop, setReashop] = useState(false);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+    const handleMarkerClick = (markerData) => {
+        setSelectedMarker(markerData);
+    };
+
+    let[openZero, setOpenZero] = useState(false);
+    const [selectZeroshop, setSelectZeroshop] = useState(null);
+
+    const handleSelectZeroShop = (selectZeroshop) => {
+        setSelectZeroshop(selectZeroshop);
+    };
+
+    let[napronOpen, setNapronOpen] = useState(false);
+    const [selectNapron, setSelectNapron] = useState(null);
+
+    const handleSelectNapron = (napron) =>{
+        setSelectNapron(napron)
+    }
 
     const [selectedSido, setSelectedSido] = useState(null);
     const [sidos, setSidos] = useState([
@@ -92,7 +115,6 @@ function App() {
 
     const [selectZeroWaste, setSelectZeroWaste] = useState(null);
     const [zeroWastes, setzeroWastes] = useState(['제로마켓', '서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주도']);
-    const [showWastes, setShowWastes] = useState(false);  // 새로운 상태 추가
 
     const handleZeroWasteSelection = (zeroWaste) => {
         // 현재 선택된 카테고리가 다시 클릭되면 선택 해제
@@ -135,16 +157,18 @@ function App() {
             <header className="top-nav">
                 <h1><TiWeatherWindyCloudy/><NavLink to="/"> 에리허브</NavLink></h1>
                 <nav className="nav-links">
-                    <NavLink to ='/forgine'>대기질현황</NavLink>
-                    <NavLink to="/edust">대기오염예보</NavLink>
+                    <NavLink to ='/forgine'>Eco-Map</NavLink>
+                    <NavLink to="/edust">초미세먼지현황</NavLink>
                 </nav>
                 <div className="nav-info">
                     <span>{formatDate}</span>
                     <a href="https://www.weather.go.kr/w/index.do" target="_blank">현재기온</a>
                 </div>
             </header>
-
             <section className="sidebar">
+                {reshop && <RecyclingCenters closeReshop ={() => setReashop(false)} setReashop={setReashop} reshop={reshop} markerData={selectedMarker} />}
+                {openZero && <ZeroCenters closeZeroshop ={() => setOpenZero(false)} setOpenZero={setOpenZero} openZero={openZero} selectZeroshop={selectZeroshop} />}
+                {napronOpen && <NapronCenters closeNapron = {()=>setNapronOpen(false)} setNapronOpen={setNapronOpen} napronOpen={napronOpen} selectNapron={selectNapron}/>}
                 <header>
                     <nav>
                         <button className="hamburger-btn">
@@ -213,7 +237,6 @@ function App() {
                     {''}
                     {chatbot && <Chatbot closeChat={() => setChatbot(false)}/>}
                 </div>
-
             </section>
 
 
@@ -235,9 +258,11 @@ function App() {
                         <p> 지금 바로 이 웹 페이지를 통해 우리의 환경을 위한 첫걸음을 내딛어보세요. 함께라면 가능합니다!</p>
                     </div>}/>
                     <Route path="/forgine"
-                           element={<Forgine selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark}/>}/>
+                           element={<Forgine selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark} setReashop={setReashop}
+                                             setOpenZero={setOpenZero} setNapronOpen={setNapronOpen}
+                                             onMarkerClick={handleMarkerClick} onZeroClick={handleSelectZeroShop} onNapronClick={handleSelectNapron} />}/>
                     <Route path="/MyMap"
-                           element={<MyMap selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark}/>}/>
+                           element={<MyMap />}/>
                     <Route path="/login"
                            element={<LoginPage setLoginStatus={setIsLogin} setLoginUser={setLogin} />}/>
                     <Route path="/logout" element={<LogoutPage/>}/>
