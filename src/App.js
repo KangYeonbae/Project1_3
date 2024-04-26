@@ -14,6 +14,7 @@ import AutoSwitchingViewer from "./router/edust"
 import RecyclingCenters from "./router/sidebar"
 import ZeroCenters from "./router/zerobar"
 import NapronCenters from "./router/BarNapron"
+import Search_location from "./router/search_location";
 
 function App() {
 
@@ -159,6 +160,7 @@ function App() {
                 <nav className="nav-links">
                     <NavLink to ='/forgine'>Eco-Map</NavLink>
                     <NavLink to="/edust">초미세먼지현황</NavLink>
+                    <NavLink to="/search">버스길찾기</NavLink>
                 </nav>
                 <div className="nav-info">
                     <span>{formatDate}</span>
@@ -267,6 +269,7 @@ function App() {
                            element={<LoginPage setLoginStatus={setIsLogin} setLoginUser={setLogin} />}/>
                     <Route path="/logout" element={<LogoutPage/>}/>
                     <Route path="/edust" element={<AutoSwitchingViewer/>}/>
+                    <Route path="/search" element={<Search_location/>}/>
                 </Routes>
             </section>
 
