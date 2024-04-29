@@ -15,6 +15,8 @@ import RecyclingCenters from "./router/sidebar"
 import ZeroCenters from "./router/zerobar"
 import NapronCenters from "./router/BarNapron"
 import Search_location from "./router/search_location";
+import Search_location_car from "./router/search_location_car";
+import ChartComponent from "./router/Chart"
 
 function App() {
 
@@ -161,6 +163,8 @@ function App() {
                     <NavLink to ='/forgine'>Eco-Map</NavLink>
                     <NavLink to="/edust">초미세먼지현황</NavLink>
                     <NavLink to="/search">버스길찾기</NavLink>
+                    <NavLink to="/car">자동차 길찾기</NavLink>
+                    <NavLink to="/chart">인수님차트</NavLink>
                 </nav>
                 <div className="nav-info">
                     <span>{formatDate}</span>
@@ -270,6 +274,8 @@ function App() {
                     <Route path="/logout" element={<LogoutPage/>}/>
                     <Route path="/edust" element={<AutoSwitchingViewer/>}/>
                     <Route path="/search" element={<Search_location/>}/>
+                    <Route path="/car" element={<Search_location_car/>}/>
+                    <Route path="/chart" element={<ChartComponent/>}/>
                 </Routes>
             </section>
 

@@ -331,6 +331,7 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
                                 height: 35
                             }
                         }}
+                        draggable={true}
                     />
                 )}
 

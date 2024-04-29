@@ -1,0 +1,41 @@
+.K_header{
+    height: 30rem;
+    /*background: lightpink;*/
+}
+
+.big_content{
+    width: 100%;
+}
+.content{
+    display: inline-block;
+    border: 1px solid lightgray;
+    width: 400px;
+    padding: 20px;
+    background: white;
+    margin: 20px 10px;
+}
+.city-item {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    margin: 0 auto;
+    transition: transform 1s ease, opacity 1s ease; /* transform과 opacity 트랜지션 추가 */
+    opacity: 1; /* 초기에는 투명하게 설정 */
+}
+
+.slide-in {
+    transform: translateX(0%); /* 오른쪽에서 왼쪽으로 슬라이드되는 효과를 위해 translateX(0)으로 설정 */
+    opacity: 1; /* 슬라이드 인 상태에서는 불투명하게 설정 */
+}
+
+.slide-out {
+    transform: translateX(100%); /* 왼쪽으로 슬라이드 아웃되는 효과를 위해 translateX(-100%)으로 설정 */
+    opacity: 1; /* 슬라이드 아웃 상태에서는 투명하게 설정 */
+}
+
+.Chatbot{
+    width: 300px;
+    height: 400px;
+    background: lightpink;
+}
+

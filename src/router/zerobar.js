@@ -20,6 +20,7 @@ function ZeroCenters(props) {
         }
     }, [props.selectZeroshop]);
 
+
     return (
         <div className="sidebar2">
             <div className="Rec">

@@ -69,6 +69,9 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT; // 결과를 객체 형식으�
 app.use('/recyclingcenters', require('./routes/recycling'))
 app.use('/napron', require('./routes/Napron'))
 app.use('/zero', require('./routes/zero'))
+app.use('/bus', require('./routes/bus'))
+app.use('/home', require('./routes/year2015'))
+app.use('/home1', require('./routes/year2020'))
 
 
 app.listen(port, () => {

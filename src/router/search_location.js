@@ -16,7 +16,6 @@ function Serch_location() {
 
     // 카카오맵 state
     const [result, setResult] = useState("")
-    const [mapLocation, setMapLocation] = useState(null)
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -35,39 +34,11 @@ function Serch_location() {
         setLatitude(position.coords.latitude);
         setLongitude(position.coords.longitude);
         setError(null);
-        sendLocationData(position.coords.latitude, position.coords.longitude);
     }
-
-    // 클릭 위치 설정 (예제를 위한 함수, 실제 구현은 다를 수 있음)
-    const handleMapClick = (event) => {
-        setClickedLat(event.lat);  // 이벤트에 따라 변경 필요
-        setClickedLng(event.lng);  // 이벤트에 따라 변경 필요
-    };
 
     const handleError = (error) => {
         setError(`위치 정보를 받아오는 데 실패했습니다: ${error.message}`);
     }
-
-    // 유저의 현재위치를 location에 반환
-    const sendLocationData = () => {
-        if (latitude && longitude && clickedLat && clickedLng) { // 모든 값이 유효할 때만 전송
-            const data = {
-                currentLatitude: latitude,
-                currentLongitude: longitude,
-                clickedLatitude: clickedLat,
-                clickedLongitude: clickedLng
-            };
-            axios.post('http://localhost:5000/location', data)
-                .then(response => {
-                    console.log('서버 응답:', response.data);
-                })
-                .catch(error => {
-                    console.error('서버 전송 중 오류 발생:', error.response ? error.response.data : error);
-                });
-        } else {
-            console.error('모든 위치 정보가 준비되지 않았습니다.');
-        }
-    };
 
     const [busRoutes, setBusRoutes] = useState([]);
 
@@ -81,11 +52,28 @@ function Serch_location() {
             });
             const data = JSON.parse(response.data.busRouteInfo);
             setBusRoutes(data.msgBody.itemList);
+            console.log(response)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    // 클릭한위치 마커생성
+    const [markerPosition, setMarkerPosition] = useState(null);
+    const handleMapClick = (_, mouseEvent) => {
+        // mouseEvent 객체에서 위도, 경도 정보 추출
+        const Maplatlng = mouseEvent.latLng;
+        if (!Maplatlng) {
+            console.error('No latLng object found in mouse event');
+            return; // latLng 객체가 없으면 함수를 종료
+        }
+        const Maplat = Maplatlng.getLat().toFixed(7);
+        const Maplng = Maplatlng.getLng().toFixed(7);
+        setResult(`클릭한 위치의 위도는 ${Maplat} 이고, 경도는 ${Maplng} 입니다`);
+        setClickedLat(Maplat); // 클릭한 위도 저장
+        setClickedLng(Maplng); // 클릭한 경도 저장
+        setMarkerPosition({ lat: parseFloat(Maplat), lng: parseFloat(Maplng) });
+    };
 
     // 버스경로지도표시
     const renderBusRoutes = () => {
@@ -121,32 +109,22 @@ function Serch_location() {
             </div>
             <div className="kakao-map">
                 <>
-                    <Map // 지도를 표시할 Container
+                    <Map
                         id="map"
-                        center={{
-                            // 지도의 중심좌표
-                            lat: latitude,
-                            lng: longitude,
-                        }}
-                        style={{
-                            width: "500px",
-                            height: "350px",
-                        }}
-                        level={3} // 지도의 확대 레벨
-                        onClick={(_, mouseEvent) => {
-                            const Maplatlng = mouseEvent.latLng
-                            const Maplat = Maplatlng.getLat().toFixed(7);
-                            const Maplng = Maplatlng.getLng().toFixed(7)
-                            setResult(
-                                // `클릭한 위치의 위도는 ${Maplatlng.getLat()} 이고, 경도는 ${Maplatlng.getLng()} 입니다`,
-                                `클릭한 위치의 위도는 ${Maplat} 이고, 경도는 ${Maplng} 입니다`,
-                            )
-                            setClickedLat(Maplat); // 클릭한 위도 저장
-                            setClickedLng(Maplng); // 클릭한 경도 저장
-                        }}
+                        center={{ lat: latitude, lng: longitude }}
+                        style={{ width: "1000px", height: "350px" }}
+                        level={3}
+                        onClick={handleMapClick}
                     >
+                        {markerPosition && (
+                            <MapMarker
+                                position={markerPosition}
+                                clickable={true} // 마커 클릭 가능 설정
+                            >
+                                <div>여기가 클릭한 위치입니다!</div>
+                            </MapMarker>
+                        )}
                         {renderBusRoutes()}
-
                         <div className="map">
                             <p>
                                 <em>지도를 클릭해주세요!</em>
@@ -154,7 +132,6 @@ function Serch_location() {
                             <p id="result">{result}</p>
                         </div>
                     </Map>
-                    <button onClick={sendLocationData}>위치 전송</button>
                 </>
                 <div>
                     <button onClick={handleFetchData}>Get Bus Route Info</button>
@@ -165,6 +142,8 @@ function Serch_location() {
                                 <p>Time: {route.time} minutes</p>
                                 <p>출발지: {route.pathList[0].fname}</p>
                                 <p>도착지: {route.pathList[0].tname}</p>
+                                <p>경유지: {route.pathList[0].railLinkId}</p>
+                                <p>도착지: {route.pathList[0].routeNm}</p>
                             </div>
                         ))}
                     </div>

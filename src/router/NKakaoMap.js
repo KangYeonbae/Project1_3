@@ -83,15 +83,6 @@ function MyMap() {
                     <li><a href="#" onClick={toggleTraffic}>교통정보</a></li>
                     <li><a href="#" onClick={toggleMarkers}>재활용</a></li>
                 </ul>
-                {/*<button*/}
-                {/*    style={ {zIndex: 2} } onClick={toggleTraffic}>*/}
-                {/*    교통정보*/}
-                {/*</button>*/}
-                {/*<button*/}
-                {/*    style={ {zIndex: 2} } onClick={toggleMarkers}>*/}
-                {/*    /!* 재활용 버튼 *!/*/}
-                {/*    재활용센터*/}
-                {/*</button>*/}
             </div>
 
         </div>
