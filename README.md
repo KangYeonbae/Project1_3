@@ -2,7 +2,6 @@
 
  Codelab Academi, AICC 3th_project  
  (강연배, 김인수, 이지우, 김은지)
- - - -
  
  ## 프로젝트 소개
 
