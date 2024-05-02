@@ -32,7 +32,7 @@ function SearchLocation() {
     const [fullRoutesDetails, setFullRoutesDetails] = useState([]);
 
 
-    const handlBusData = async () => {
+    const handleFetchData = async () => {
         setLoading(true);
         try {
             const response = await axios.post('http://localhost:5000/location', {
@@ -71,18 +71,25 @@ function SearchLocation() {
 
     const renderBusRoutes = () => {
         return busRoutes.map((route, index) => {
-            console.log("Route Data:", route);  // 각 노선 데이터 로깅
-            const pathList = route.msgBody && route.msgBody.itemList ? route.msgBody.itemList : [];  // itemList 접근 로직 수정
+            const pathList = route.msgBody && route.msgBody.itemList ? route.msgBody.itemList : [];
 
             if (!Array.isArray(pathList) || pathList.length === 0) {
                 console.error('No pathList available for route:', route);
                 return null;
             }
 
+            // 사용자의 현재 위치와 클릭한 위치 사이의 좌표만 필터링
+            const filteredPathList = pathList.filter(point => {
+                const lat = parseFloat(point.gpsY);
+                const lng = parseFloat(point.gpsX);
+                return (lat >= Math.min(latitude, clickedLat) && lat <= Math.max(latitude, clickedLat) &&
+                    lng >= Math.min(longitude, clickedLng) && lng <= Math.max(longitude, clickedLng));
+            });
+
             return (
                 <Polyline
                     key={index}
-                    path={pathList.map(point => ({
+                    path={filteredPathList.map(point => ({
                         lat: parseFloat(point.gpsY),
                         lng: parseFloat(point.gpsX)
                     }))}
@@ -94,6 +101,7 @@ function SearchLocation() {
             );
         });
     };
+
 
 
     const renderFullRouteDetails = () => {
@@ -141,7 +149,7 @@ function SearchLocation() {
                     {renderBusRoutes()}
                 </Map>
             </div>
-            <button onClick={handlBusData} disabled={loading}>
+            <button onClick={handleFetchData} disabled={loading}>
                 {loading ? 'Loading...' : 'Get Bus Route Info'}
             </button>
             <div className="route-details">

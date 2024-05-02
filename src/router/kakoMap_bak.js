@@ -15,7 +15,9 @@ import "../css/KakaoMap.css";
 import axios from "axios";
 
 
-function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerClick, onZeroClick, setOpenZero, onNapronClick,  setNapronOpen, setCarRoutes, carRoutes, setFullRoutesDetails }) {
+function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerClick, onZeroClick,
+                   setOpenZero, onNapronClick,  setNapronOpen, currentPosition, clickedPosition, setClickedPosition,
+                   setCarRoutes, carRoutes, latitude, longitude, clickedLat, clickedLng, moveToCurrentLocation, setCenter,center}) {
     /* global kakao */
     const [traffic, setTraffic] = useState(false);
     const [mapTypeId, setMapTypeId] = useState();
@@ -24,7 +26,6 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
 
     const [map, setMap] = useState();
 
-    const [center, setCenter] = useState({ lat: 37.558185572111356, lng: 127.00091673775184 });
     const [level, setLevel] = useState(9);
 
 
@@ -32,149 +33,69 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         setMap(map);
     };
 
-    const [currentPosition, setCurrentPosition] = useState(null);  // 사용자의 현재 위치를 저장할 상태
-    const [latitude, setLatitude] = useState(null);
-    const [longitude, setLongitude] = useState(null);
     const [error, setError] = useState(null);
 
 
 // 사용자 위치로 이동하는 함수
-    const moveToCurrentLocation = () => {
-        if (!navigator.geolocation) {
-            alert("Geolocation is not supported by this browser.");
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                const newCenter = { lat: latitude, lng: longitude };
-                setCenter(newCenter);
-                setCurrentPosition(newCenter);  // 현재 위치를 상태에 저장
-                setLevel(3);  // 줌 레벨 조정
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
-                setError(null);
-            },
-            (error) => {
-                console.error("Error fetching current location:", error);
-                alert("현재 위치를 가져올 수 없습니다.");
-            },
-            { enableHighAccuracy: true }
-        );
-    };
-
-    const [loading, setLoading] = useState(false);
-    const [clickedLat, setClickedLat] = useState(null);
-    const [clickedLng, setClickedLng] = useState(null);
-
+//     const moveToCurrentLocation = () => {
+//         if (!navigator.geolocation) {
+//             alert("Geolocation is not supported by this browser.");
+//             return;
+//         }
+//
+//         navigator.geolocation.getCurrentPosition(
+//             (position) => {
+//                 const { latitude, longitude } = position.coords;
+//                 const newCenter = { lat: latitude, lng: longitude };
+//                 setCenter(newCenter);
+//                 setCurrentPosition(newCenter);  // 현재 위치를 상태에 저장
+//                 setLevel(3);  // 줌 레벨 조정
+//                 setLatitude(position.coords.latitude);
+//                 setLongitude(position.coords.longitude);
+//                 setError(null);
+//             },
+//             (error) => {
+//                 console.error("Error fetching current location:", error);
+//                 alert("현재 위치를 가져올 수 없습니다.");
+//             },
+//             { enableHighAccuracy: true }
+//         );
+//     };
 
     // handleFetchData 함수 수정
-    const handleFetchData = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.post('http://localhost:5000/kakao', {
-                currentLatitude: latitude,
-                currentLongitude: longitude,
-                clickedLatitude: clickedLat,
-                clickedLongitude: clickedLng
-            });
-            console.log('Server response:', response.data);
-            if (response.data && response.data.carRouteInfo) {
-                const data = typeof response.data.carRouteInfo === 'string' ?
-                    JSON.parse(response.data.carRouteInfo) : response.data.carRouteInfo;
-                setCarRoutes(data.routes);
-            } else {
-                console.error('Invalid or missing carRouteInfo in response:', response.data);
-                setError('서버로부터 유효한 경로 정보를 받지 못했습니다.');
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setError(`경로 정보를 가져오는 데 실패했습니다. 에러 메시지: ${error.message}`);
-        }
-        setLoading(false);
-    };
-
-    const [busRoutes, setBusRoutes] = useState([]);
-
-    const handlBusData = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.post('http://localhost:5000/location', {
-                currentLatitude: latitude,
-                currentLongitude: longitude,
-                clickedLatitude: clickedLat,
-                clickedLongitude: clickedLng
-            });
-            console.log("API Response:", response.data);  // API 응답 전체 로깅
-
-            if (response.data) {
-                if (response.data.busRoutesData) {
-                    const busRoutesData = Object.values(response.data.busRoutesData);  // 객체를 배열로 변환
-                    console.log("Converted busRoutesData:", busRoutesData);  // 변환된 배열 로깅
-                    setBusRoutes(busRoutesData);
-                } else {
-                    console.error("No busRoutesData found or it is not in the expected format");
-                    setBusRoutes([]);
-                }
-
-                if (response.data.fullResponseData && response.data.fullResponseData.msgBody) {
-                    const fullRouteDetails = response.data.fullResponseData.msgBody.itemList;
-                    console.log("Full Route Details:", fullRouteDetails);  // 전체 노선 세부 정보 로깅
-                    setFullRoutesDetails(fullRouteDetails);
-                } else {
-                    console.error("No fullResponseData found or it is not in the expected format");
-                    setFullRoutesDetails([]);
-                }
-            }
-        } catch (error) {
-            setError(`Failed to fetch data: ${error.message}`);
-            console.error("API Request failed:", error);
-        }
-        setLoading(false);
-    };
-
-    const renderBusRoutes = () => {
-        return busRoutes.map((route, index) => {
-            console.log("Route Data:", route);  // 각 노선 데이터 로깅
-            const pathList = route.msgBody && route.msgBody.itemList ? route.msgBody.itemList : [];  // itemList 접근 로직 수정
-
-            if (!Array.isArray(pathList) || pathList.length === 0) {
-                console.error('No pathList available for route:', route);
-                return null;
-            }
-
-            return (
-                <Polyline
-                    key={index}
-                    path={pathList.map(point => ({
-                        lat: parseFloat(point.gpsY),
-                        lng: parseFloat(point.gpsX)
-                    }))}
-                    strokeWeight={5}
-                    strokeColor="#FF0000"
-                    strokeOpacity={0.7}
-                    strokeStyle="solid"
-                />
-            );
-        });
-    };
+    // const handleFetchData = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await axios.post('http://localhost:5000/kakao', {
+    //             currentLatitude: latitude,
+    //             currentLongitude: longitude,
+    //             clickedLatitude: clickedLat,
+    //             clickedLongitude: clickedLng
+    //         });
+    //         console.log('Server response:', response.data);
+    //         if (response.data && response.data.carRouteInfo) {
+    //             const data = typeof response.data.carRouteInfo === 'string' ?
+    //                 JSON.parse(response.data.carRouteInfo) : response.data.carRouteInfo;
+    //             setCarRoutes(data.routes);
+    //         } else {
+    //             console.error('Invalid or missing carRouteInfo in response:', response.data);
+    //             setError('서버로부터 유효한 경로 정보를 받지 못했습니다.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //         setError(`경로 정보를 가져오는 데 실패했습니다. 에러 메시지: ${error.message}`);
+    //     }
+    //     setLoading(false);
+    // };
 
     // 클릭한위치 마커생성
     const [markerPosition, setMarkerPosition] = useState(null);
-    const handleMapClick = (_, mouseEvent) => {
-        // mouseEvent 객체에서 위도, 경도 정보 추출
-        const Maplatlng = mouseEvent.latLng;
-        if (!Maplatlng) {
-            console.error('No latLng object found in mouse event');
-            return; // latLng 객체가 없으면 함수를 종료
-        }
-        const Maplat = Maplatlng.getLat().toFixed(7);
-        const Maplng = Maplatlng.getLng().toFixed(7);
-        setClickedLat(Maplat); // 클릭한 위도 저장
-        setClickedLng(Maplng); // 클릭한 경도 저장
-        setMarkerPosition({ lat: parseFloat(Maplat), lng: parseFloat(Maplng) });
-    };
+    // const handleMapClick = (mouseEvent) => {
+    //     setClickedPosition({
+    //         lat: mouseEvent.latLng.getLat(),
+    //         lng: mouseEvent.latLng.getLng()
+    //     });
+    // };
 
 
     useEffect(() => {
@@ -472,7 +393,6 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
                         />
                     );
                 })}
-                {renderBusRoutes()}
                 {/*클릭한위치 마커생성*/}
                 {markerPosition && (
                     <MapMarker
@@ -576,9 +496,6 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
                     <button onClick={toggleTraffic}>교통정보</button>
                     <button onClick={toggleRoadView}>로드뷰</button>
                     <button onClick={toggleUseDistrict}>지적편집도</button>
-                    <button onClick={handleFetchData}>자동차길찾기</button>
-                    <button onClick={handlBusData}>버스길찾기</button>
-                    <button onClick={moveToCurrentLocation}>내 위치</button>
                 </ul>
             </div>
         </div>

@@ -24,15 +24,16 @@ function Chatbot(props) {
         };
 
         const loadAllData = async () => {
-            const newMarkData = await fetchData('http://localhost:5000/newmark');
-            const zeroData = await fetchData('http://localhost:5000/zero');
-            const placesData = await fetchData('http://localhost:5000/places');
+            const newMarkData = await fetchData('http://localhost:3001/recyclingcenters');
+            const zeroData = await fetchData('http://localhost:3001/zero');
+            const placesData = await fetchData('http://localhost:3001/napron');
 
             // 상태에 저장 혹은 추가적인 로직 구현
             setResponses({ newMarkData, zeroData, placesData });
         };
 
         loadAllData();
+        console.log(loadAllData)
     }, []);
 
 
@@ -64,6 +65,8 @@ function Chatbot(props) {
             appendMessage('User\n', userInput);
 
             let responseMessage = '해당 정보를 찾을 수 없습니다.';
+
+            console.log(responses)
 
             // 먼저 마커 정보를 검색
             const markerInfo = responses.newMarkData.find(m => m.재활용센터명.toLowerCase().includes(userInput));

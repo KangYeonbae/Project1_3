@@ -17,15 +17,11 @@ import NapronCenters from "./router/BarNapron"
 import Search_location from "./router/search_location";
 import Search_location_car from "./router/search_location_car";
 import ChartComponent from "./router/Chart"
+import {GiEcology, GiHamburgerMenu} from "react-icons/gi";
+import {FaBusAlt, FaCar} from "react-icons/fa";
+import {FaPersonWalking, FaTrainSubway} from "react-icons/fa6";
 
 function App() {
-
-
-    const [currentView, setCurrentView] = useState(null);
-    const toggleView = (view) => {
-        setCurrentView(currentView === view ? null : view);
-    };
-
     let navigate = useNavigate();
     // 로그인 상태를 localStorage에서 로드
     const loadAuthData = () => {
@@ -63,188 +59,60 @@ function App() {
     // 챗봇창 열기
     let [chatbot, setChatbot] = useState(false)
 
-    // 센터들 정보창열기
-    let [reshop, setReashop] = useState(false);
-    const [selectedMarker, setSelectedMarker] = useState(null);
-    const handleMarkerClick = (markerData) => {
-        setSelectedMarker(markerData);
-    };
-
-    let[openZero, setOpenZero] = useState(false);
-    const [selectZeroshop, setSelectZeroshop] = useState(null);
-
-    const handleSelectZeroShop = (selectZeroshop) => {
-        setSelectZeroshop(selectZeroshop);
-    };
-
-    let[napronOpen, setNapronOpen] = useState(false);
-    const [selectNapron, setSelectNapron] = useState(null);
-
-    const handleSelectNapron = (napron) =>{
-        setSelectNapron(napron)
-    }
-
-    const [selectedSido, setSelectedSido] = useState(null);
-    const [sidos, setSidos] = useState([
-        '강원도', '경기도', '경상도', '광주', '대구',
-        '대전', '부산', '서울', '인천', '울산',
-        '전라도', '제주', '충청도'
-    ]);
-
-    const handleSidoSelection = (sido) => {
-        // 현재 선택된 지역이 다시 클릭되면 선택 해제
-        if (selectedSido === sido) {
-            setSelectedSido(null);
-        } else {
-            setSelectedSido(sido);
-        }
-    };
-
-    // 시도 지역페이지나누기
-    const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 9; // 한 페이지당 9개의 항목을 표시
-    const maxPage = Math.ceil(sidos.length / itemsPerPage) - 1;
-
-    // 페이지를 변경하는 함수
-    const goToNextPage = () => setCurrentPage((page) => Math.min(page + 1, maxPage));
-    const goToPrevPage = () => setCurrentPage((page) => Math.max(page - 1, 0));
-
-    // 현재 페이지에 맞는 항목의 범위 계산
-    const startIndex = currentPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentItems = sidos.slice(startIndex, endIndex);
-
-
-
-    const [selectZeroWaste, setSelectZeroWaste] = useState(null);
-    const [zeroWastes, setzeroWastes] = useState(['제로마켓', '서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주도']);
-
-    const handleZeroWasteSelection = (zeroWaste) => {
-        // 현재 선택된 카테고리가 다시 클릭되면 선택 해제
-        if (selectZeroWaste === zeroWaste) {
-            setSelectZeroWaste(null);
-        } else {
-            setSelectZeroWaste(zeroWaste);
-        }
-    };
-
-
-    const [selectMark, setSelectZeroMark] = useState(null);
-    const [zeroMarks, setzeroMarks] = useState(['서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주']);
-
-    const handleMarkSecletion = (zeroMark) =>{
-        if(selectMark === zeroMark) {
-            setSelectZeroMark(null);
-        }else {
-            setSelectZeroMark(zeroMark);
-        }
-    }
-
 
     return (
         <div className="App">
-            <header className="header-Top">
-                <NavLink to ="/" className="gradient-text"><h1>Eco-Recycling Hub</h1></NavLink>
-                {isLogin ? (
-                    <div className="login-btn">
-                        <button className="dropdown-btn">{login.nickname} ▼</button>
-                        <div className="dropdown-content">
-                            <NavLink className="myPage" to="/mypage" >마이페이지</NavLink>
-                            <button className="nav-link" onClick={logout}>로그아웃</button>
-                        </div>
-                    </div>
-                ) : (
-                    <NavLink to="/login" className="login-btn">로그인</NavLink>
-                )}
-            </header>
             <header className="top-nav">
-                <h1><TiWeatherWindyCloudy/><NavLink to="/"> 에리허브</NavLink></h1>
+                <h1><NavLink to="/">
+                    <h3><span>ECO</span> RECYCLE HUB</h3>
+                </NavLink>
+                </h1>
+                <div className="site-icon">
+                    <GiEcology/>
+                </div>
                 <nav className="nav-links">
-                    <NavLink to ='/forgine'>Eco-Map</NavLink>
+                    <NavLink to='/mymap'>Eco-Map</NavLink>
                     <NavLink to="/edust">초미세먼지현황</NavLink>
-                    <NavLink to="/search">버스길찾기</NavLink>
-                    <NavLink to="/car">자동차 길찾기</NavLink>
-                    <NavLink to="/chart">인수님차트</NavLink>
+                    <NavLink to="/chart">전국재활용처리</NavLink>
                 </nav>
-                <div className="nav-info">
-                    <span>{formatDate}</span>
-                    <a href="https://www.weather.go.kr/w/index.do" target="_blank">현재기온</a>
-                </div>
-            </header>
-            <section className="sidebar">
-                {reshop && <RecyclingCenters closeReshop ={() => setReashop(false)} setReashop={setReashop} reshop={reshop} markerData={selectedMarker} />}
-                {openZero && <ZeroCenters closeZeroshop ={() => setOpenZero(false)} setOpenZero={setOpenZero} openZero={openZero} selectZeroshop={selectZeroshop} />}
-                {napronOpen && <NapronCenters closeNapron = {()=>setNapronOpen(false)} setNapronOpen={setNapronOpen} napronOpen={napronOpen} selectNapron={selectNapron}/>}
-                <header>
-                    <nav>
-                        <button className="hamburger-btn">
-                            <FiAlignJustify/>
-                        </button>
-                        <h2><NavLink to ="/forgine">ECO Recycle Hub</NavLink></h2>
-                    </nav>
-                    <div className="head-weather">
-                        <div className="myLocation">
-                            <Weather/>
-                        </div>
-                    </div>
-                </header>
-                <div className="main-contents">
-                    <div className="small_nav">
-                        <button className="nav_button" onClick={() => toggleView('sidos')}>페트병수거함</button>
-                        <button className="nav_button" onClick={() => toggleView('zeroWastes')}>제로웨이스트</button>
-                        <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
-                    </div>
-                    {currentView === 'sidos' && (
-                        <div>
-                        <div className="senter-marker">
-                              {currentItems.map((sido) => (
-                                <button key={sido} onClick={() => handleSidoSelection(sido)}>
-                                    {sido}
-                                </button>
-                            ))}
-                            </div>
-                            <div className="pagination">
-                                <button onClick={goToPrevPage} disabled={currentPage === 0}>
-                                    이전
-                                </button>
-                                <button onClick={goToNextPage} disabled={currentPage === maxPage}>
-                                    다음
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    {currentView === 'zeroWastes' && (
-                        <div className="senter-marker">
-                            {zeroWastes.map((zeroWaste, index) => (
-                                <button key={zeroWaste} onClick={() => handleZeroWasteSelection(zeroWaste)}>
-                                    {zeroWaste}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                    {currentView === 'zeroMarks' && (
-                        <div className="senter-marker">
-                            {zeroMarks.map((zeroMark, index) => (
-                                <button key={zeroMark} onClick={() => handleMarkSecletion(zeroMark)}>
-                                    {zeroMark}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                <div className="Chatbot">
-                    <button
-                        className="chat-open-btn"
-                        // onClick={openChat}
-                        onClick={() => {
-                            setChatbot(!chatbot)
-                        }}><IoLogoWechat/>
-                    </button>
-                    {''}
-                    {chatbot && <Chatbot closeChat={() => setChatbot(false)}/>}
-                </div>
-            </section>
 
+            </header>
+
+            <header className="header-Top">
+                <div className="tNumb-address">
+                    <h5 className="site-numb">
+                        T.02-2038-0800</h5>
+                    <h5 className="address">서울 금천구 가산디지털2로 144 현대테라타워 가산DK 20층</h5>
+                </div>
+
+                <div className="user-btn">
+                    {isLogin ? (
+                        <div className="login-btn">
+                            <button className="dropdown-btn">{login.nickname} ▼</button>
+                            <div className="dropdown-content">
+                                <NavLink className="myPage" to="/mypage">마이페이지</NavLink>
+                                <button className="nav-link" onClick={logout}>로그아웃</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <NavLink to="/login" className="login-btn">로그인</NavLink>
+                    )}
+                    <GiHamburgerMenu/>
+                </div>
+
+            </header>
+
+            <div className="Chatbot">
+                <button
+                    className="chat-open-btn"
+                    // onClick={openChat}
+                    onClick={() => {
+                        setChatbot(!chatbot)
+                    }}><IoLogoWechat/>
+                </button>
+                {''}
+                {chatbot && <Chatbot closeChat={() => setChatbot(false)}/>}
+            </div>
 
             <section className="main-con">
                 <Routes>
@@ -263,14 +131,10 @@ function App() {
                         <p> 건강하고 지속 가능하게 만들어갈 것입니다.</p>
                         <p> 지금 바로 이 웹 페이지를 통해 우리의 환경을 위한 첫걸음을 내딛어보세요. 함께라면 가능합니다!</p>
                     </div>}/>
-                    <Route path="/forgine"
-                           element={<Forgine selectedSido={selectedSido} selectZeroWaste={selectZeroWaste} selectMark={selectMark} setReashop={setReashop}
-                                             setOpenZero={setOpenZero} setNapronOpen={setNapronOpen}
-                                             onMarkerClick={handleMarkerClick} onZeroClick={handleSelectZeroShop} onNapronClick={handleSelectNapron} />}/>
                     <Route path="/MyMap"
-                           element={<MyMap />}/>
+                           element={<MyMap/>}/>
                     <Route path="/login"
-                           element={<LoginPage setLoginStatus={setIsLogin} setLoginUser={setLogin} />}/>
+                           element={<LoginPage setLoginStatus={setIsLogin} setLoginUser={setLogin}/>}/>
                     <Route path="/logout" element={<LogoutPage/>}/>
                     <Route path="/edust" element={<AutoSwitchingViewer/>}/>
                     <Route path="/search" element={<Search_location/>}/>

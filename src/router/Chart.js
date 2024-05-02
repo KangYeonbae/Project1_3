@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // axios를 사용하기 위해 import합니다.
 import Chart from 'chart.js/auto'; // Chart.js를 import
-// import "../chart.css"
+import "../css/chart.css"
 
 function ChartComponent() {
 
@@ -124,7 +124,7 @@ function ChartComponent() {
     // 2015~2019년 재활용쓰레기 라인차트
     useEffect(() => {
         // '재활용'을 포함하고 '소계'인 데이터 필터링
-        const filteredData = serverData20.filter(item => item.CATEGORY3 === '소계' && item.CATEGORY2.includes('재활용'));
+        const filteredData = serverData15.filter(item => item.CATEGORY3 === '소계' && item.CATEGORY2.includes('재활용'));
 
         // 차트 생성
         const chart = new Chart(document.getElementById('recycleChart15'), {
@@ -381,20 +381,21 @@ function ChartComponent() {
     return (
         <div className="chart-container">
             <div className="chart">
-                <canvas id="emissionsChart15" width="500" height="500"></canvas>
+                <canvas id="emissionsChart15" width="500px" height="500px"></canvas>
+            </div>
+            <div className="chart">
+                <canvas id="recycleChart15" width="500" height="500"></canvas>
+            </div>
+            <div className="doughnutChart">
+                <canvas id="Chart15" width="500" height="500"></canvas>
             </div>
             <div className="chart">
                 <canvas id="emissionsChart20" width="500" height="500"></canvas>
             </div>
             <div className="chart">
-                <canvas id="recycleChart15" width="500" height="500"></canvas>
-            </div>
-            <div className="chart">
                 <canvas id="recycleChart20" width="500" height="500"></canvas>
             </div>
-            <div className="doughnutChart">
-                <canvas id="Chart15" width="500" height="500"></canvas>
-            </div>
+
             <div className="doughnutChart">
                 <canvas id="Chart20" width="500" height="500"></canvas>
             </div>

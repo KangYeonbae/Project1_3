@@ -120,7 +120,7 @@ function Serch_location_Car() {
         } else if (trafficInfo === 'congested') {
             return '#FF0000';
         } else {
-            return '#000000'; // 기본값: 검은색
+            return '#007B83'; // 기본값: 검은색
         }
     };
 
@@ -193,7 +193,6 @@ function Serch_location_Car() {
                 <div>
                     <button onClick={handleFetchData}>Get car Route Info</button>
                     <div>
-                        {/*{renderCarRoutes()}*/}
                         {renderRouteDetails()}
                     </div>
                 </div>

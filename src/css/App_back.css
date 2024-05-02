@@ -11,9 +11,8 @@ body {
 }
 
 .App {
-  width: 100%;
-  /*display: flex;*/
-  /*flex-direction: row; !* 넓은 화면에서는 사이드바와 지도가 나란히 배치됨 *!*/
+  display: flex;
+  flex-direction: row; /* 넓은 화면에서는 사이드바와 지도가 나란히 배치됨 */
   height: 90vh;
 }
 
@@ -25,52 +24,23 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
   z-index: 999;
   padding: 10px 20px;
   box-sizing: border-box;
   background: #fff; /* 예시 배경색 */
-  margin: 0 auto;
-  position: relative;
-  border-bottom: 1px solid #ccc;
-}
-/* number+address */
-.tNumb-address {
-  display: flex;
-  align-items: center;
-  color: #555;
-}
-.site-numb { padding-right: 15px; }
-.address { font-weight: 500; }
-
-/* login-btn */
-.user-btn {
-  display: flex;
-  align-items: center;
-  text-align: center;
 }
 
-/* site icons */
-.site-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 99;
-}
-.site-icon svg {
-  color: #fff;
-  font-size: 50px;
-}
-
-
-/*.gradient-text {*/
-/*  background-image: linear-gradient(45deg, #3496fe, #178844 50%);*/
-/*  -webkit-background-clip: text;*/
-/*  background-clip: text;*/
-/*  color: transparent;*/
-/*  margin : 0 auto;*/
-/*  }*/
+.gradient-text {
+  background-image: linear-gradient(45deg, #3496fe, #178844 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin : 0 auto;
+  }
 
 .top-nav {
   display: flex;
@@ -79,14 +49,12 @@ body {
   background: linear-gradient(45deg, #3496fe, #178844 50%);
   color: white;
   padding: 10px 20px;
-  /*position: fixed;*/
-  /*top: 50px; !* 헤더 아래에 위치하도록 조정 *!*/
+  position: fixed;
+  top: 70px; /* 헤더 아래에 위치하도록 조정 */
   width: 100%;
   height: 70px;
   z-index: 998; /* 헤더 위에 오도록 z-index 값 조정 */
   box-sizing: border-box; /* 패딩을 포함한 너비가 100%가 되도록 설정 */
-  margin: 0 auto;
-  position: relative;
 }
 
 .top-nav a, .sidebar a, .nav-info a {
@@ -104,22 +72,24 @@ body {
 }
 
 .sidebar {
-  width: 400px; /* 기본 사이드바 너비 설정 */
-  height: calc(100vh - 160px); /* 화면의 전체 높이 */
-  background: #fff;
-  position: absolute;
-  top: 140px;
-  left: 20px;
-  z-index: 99;
-  border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  flex-basis: 400px; /* 기본 사이드바 너비 설정 */
+  height: calc(100vh - 140px); /* 화면의 전체 높이 */
+  background: #16a085;
+  margin-top: 140px;
+  /* 기타 스타일 */
 }
 
-.main-con { position: relative; }
+.main-con {
+  flex-grow: 1;
+  margin-top: 140px;/* 남은 공간을 모두 차지 */
+  /* 기타 스타일 */
+}
+
 
 .Map {
-  width: 100%; /* 사이드바의 너비를 고려한 지도의 너비 */
-  height: calc(100vh - 120px); /* 전체 높이 */
+  width: calc(100vw - 400px); /* 사이드바의 너비를 고려한 지도의 너비 */
+  height: calc(100vh - 140px); /* 전체 높이 */
+  float: left; /* 사이드바 옆에 표시 */
 }
 
 .Navbar{
@@ -128,6 +98,7 @@ body {
   left: 0;
   right: 0;
   z-index: 1030;
+
 }
 .sidebar header {
   padding: 20px;
@@ -160,80 +131,38 @@ body {
   margin: 0 auto;
   text-align: center;
 }
-.main-contents {
-  padding: 16px;
-  border-bottom: 1px solid #ccc;
+
+.nav_button{
+  width: 120px;
+  background: white;
+  margin-top: 30px;
+  cursor: pointer;
 }
 
 .small_nav{
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
+  margin: 0 auto;
+  justify-content: center;
   align-items: center;
-  padding-bottom: 16px;
+  text-align: center;
 }
 .small_nav .nav_button{
-  display: flex;
-  color: #fff;
-  padding: 10px 23.5px;
-  border-radius: 5px;
+  background: white;
+  margin: 20px 5px;
+  padding: 10px;
+  border-radius: 10px;
+  color : #16a085;
   cursor: pointer;
-  background: #3496fe;
+
 }
 
 .small_nav .nav_button:hover{
-  /*background: whitesmoke;*/
-  /*margin: 20px 5px;*/
-  /*padding: 10px;*/
-  /*border-radius: 10px;*/
-  /*color: #16a085;*/
-  /*font-weight: bold;*/
-  /*cursor: pointer;*/
-}
-.small_nav .nav_button:active {
-  background: #3496fe;
-  color: #fff;
-}
-.search-location {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-.start-btn, .end-btn {
-  width: 16px;
-  height: 16px;
-  border: 1px solid red;
-  background: red;
-}
-.search-location input {
-  width: 100%;
-  border: none;
-  padding: 16px;
-}
-.search-cate {
-  padding-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.search-cate ul {
-  padding: 0 16px;
-  display: flex;
-}
-.search-cate li { padding-right: 20px; }
-.search-cate svg {
-  color: #252525;
-  transition: all .2s ease;
-}
-.search-cate li svg:hover { fill: #3496fe; }
-.search-cate .search-btn {
-  background: #3496fe;
-  padding: 10px 16px;
-  border-radius: 5px;
-  margin-left: auto;
-
+  background: whitesmoke;
+  margin: 20px 5px;
+  padding: 10px;
+  border-radius: 10px;
+  color : #16a085;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .sub {
@@ -246,19 +175,16 @@ body {
   padding: 20px;
 }
 
-/* login btn & hover */
 .login-btn{
-  color: #555;
+  border: 2px solid #A2E1D4;
   padding: 10px;
   border-radius: 10px;
-  transition: all 0.3s ease;
+  background-color: #A2E1D4;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  position: relative;
 }
-.login-btn:hover {
-  color: #fff;
-  background: #3496fe;
-  border-radius: 10px;
-}
-
 .myPage, .nav-link{
   border: none;
   padding: 10px;
@@ -300,22 +226,16 @@ body {
 .Chatbot {
   width: 80px;
   height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  line-height: 76px;
+  text-align: center;
   background: #178844;
   border-radius: 100px 100px 0 100px;
   position: absolute;
-  right: 70px;
-  bottom: 10px;
+  right: 3%;
+  bottom: 2%;
   z-index: 999;
-  transition: all 0.5s ease;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-  /*animation: moveUpDown 3s ease infinite;*/
 }
-.Chatbot:hover {
-  transform: translateY(-10px);
-}
+
 .chat-open-btn {
   background: none;
   border: none;
@@ -326,33 +246,33 @@ body {
   font-size: 55px;
 }
 
-/* marker fixing */
 .senter-marker {
-  /*width: 500px;*/
-  position: fixed;
-  left: 51%;
-  bottom: 0;
-  transform: translate(-50%, 0);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.senter-marker button {
+  width: 100px;
+  height: 100px;
+  border: none;
+  border-radius: 50px;
+  background: #3FBFAD;
+  margin: 10px;
+  font-size: 1em;
+  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: #fff;
-  padding: 10px;
-  border-radius: 10px 10px 0 0;
-  transition: all .3s ease-in-out;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-}
-.senter-marker button {
-  margin: 10px;
-  font-size: 1em;
+  overflow: hidden;
   cursor: pointer;
-  line-height: 24px;
-  color: #5a5a5a;
 }
-.senter-marker:hover { padding-bottom: 20px; }
+
 .senter-marker button:hover{
-  color: #178844;
+  background-color: #A2E1D4; /* 호버 상태의 배경색 변경 */
   cursor: pointer;
 }
 
@@ -413,12 +333,16 @@ body {
     height: 50vh; /* 원하는 높이로 설정, 예를 들어 화면 높이의 절반 */
     /* 다른 스타일 */
   }
-  /*.sidebar {*/
-  /*  margin-top: 0;*/
-  /*  width: 100%; !* 사이드바가 화면 너비를 100% 차지하도록 *!*/
-  /*  height: 50vh; !* 나머지 높이를 차지하도록, 예를 들어 화면 높이의 절반 *!*/
-  /*  !* 다른 스타일 *!*/
-  /*}*/
+  .sidebar {
+    margin-top: 0;
+    width: 100%; /* 사이드바가 화면 너비를 100% 차지하도록 */
+    height: 50vh; /* 나머지 높이를 차지하도록, 예를 들어 화면 높이의 절반 */
+    /* 다른 스타일 */
+  }
+  .top-nav {
+    flex-direction: column;
+    padding: 10px;
+  }
 
   .nav-links {
     margin-top: 10px;
