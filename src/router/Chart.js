@@ -13,8 +13,8 @@ function ChartComponent() {
         fetch('http://localhost:3001/home1') // 서버 API URL에 따라 바꾸세요
             .then(response => response.json())
             .then(fetchedData => {
+                fetchedData.sort((a, b) => a.YEAR - b.YEAR);
                 setServerData20(fetchedData);// 서버에서 가져온 데이터를 상태에 저장
-                console.log(serverData20)
             })
             .catch(error => {
                 console.error('Fetching data failed:', error);
@@ -32,6 +32,7 @@ function ChartComponent() {
         fetch('http://localhost:3001/home')
             .then(response => response.json())
             .then(fetchedData => {
+                fetchedData.sort((a, b) => a.YEAR - b.YEAR);
                 setServerData15(fetchedData);
             })
             .catch(error => {
