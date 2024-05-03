@@ -1,10 +1,10 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=Eco%20Recycl%20nHub!&fontAlignY=40)
+![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=Eco%20Recycl%20Hub!&fontAlignY=40)
 # Eco Recyle Hub(에코 리사이클 허브)
 
 
  ## 프로젝트 소개
 
->이 프로젝트는 이용자, 더 나아가 우리 모두에게 재활용 생활화를 독려하며 유용한 정보와 서비스를 제공을 목표로 합니다.
+>이 프로젝트는 이용자, 더 나아가 우리 모두에게 재활용 생활화를 독려하며 유용한 정보와 서비스 제공을 목표로 합니다.
 >
 >사용자에게 지도 기능을 중점으로 재활용 센터, 페트병 수거 자판기, 제로 웨이스트 샵과 같은 재활용 관련 시설의 정보를 제공하며, 폐기물 배출량과 미세먼지 농도와 같은 환경 지표를 시각적으로 제공하여 사용자들이 지역의 환경 상태를 쉽게 파악할 수 있도록 돕습니다. 또한, 사용자의 위치를 기준으로 가장 가까운 제로 웨이스트 샵까지의 길찾기 기능을 개발하여 좀 더 간편한 서비스를 제공합니다.
 >
