@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {GoPaperAirplane} from "react-icons/go";
 import {IoClose} from "react-icons/io5";
-import {RiRobot2Fill} from "react-icons/ri";
+import {RiRobot2Line, RiRobot2Fill} from "react-icons/ri";
 import "../css/ChatBot.css";
-
+import { FaMicrophone, FaMicrophoneSlash  } from "react-icons/fa";
 function Chatbot(props) {
     const [chatHistory, setChatHistory] = useState([]);
     const [responses, setResponses] = useState([]);
@@ -270,12 +270,12 @@ function Chatbot(props) {
                     onChange={e => setUserInput(e.target.value)}  // 입력 시 state 업데이트
                     onKeyDown={handleKeyDown}
                 />
-                <button onClick={() => sendMessage(userInput)}><GoPaperAirplane/></button>
-                <button onClick={() => isListening ? stopListening() : startListening()}>
-                    {isListening ? '음성 인식 중지' : '음성 인식 시작'}
+                <button className="spend_button" onClick={() => sendMessage(userInput)}><GoPaperAirplane/></button>
+                <button className="vioce_button" onClick={() => isListening ? stopListening() : startListening()}>
+                    {isListening ? <FaMicrophoneSlash />: <FaMicrophone />}
                 </button>
-                <button onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}>
-                {isVoiceEnabled ? '음성 답변 끄기' : '음성 답변 켜기'}</button>
+                <button className="speak_button" onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}>
+                {isVoiceEnabled ? <RiRobot2Line /> :<RiRobot2Fill />}</button>
             </div>
         </div>
     );

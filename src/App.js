@@ -56,23 +56,23 @@ function App() {
     // 챗봇창 열기
     let [chatbot, setChatbot] = useState(false)
 
-
     return (
         <div className="App">
             <header className="top-nav">
-                <h1><NavLink to="/">
-                    <h3><span>ECO</span> RECYCLE HUB</h3>
-                </NavLink>
+                <h1>
+                    <NavLink to="/">
+                        <h3><span>ECO</span> RECYCLE HUB</h3>
+                    </NavLink>
                 </h1>
                 <div className="site-icon">
                     <GiEcology/>
                 </div>
-                <nav className="nav-links">
+                <nav className='nav-links'>
+                    <NavLink to='/'>home</NavLink>
                     <NavLink to='/mymap'>Eco-Map</NavLink>
                     <NavLink to="/edust">초미세먼지현황</NavLink>
                     <NavLink to="/chart">전국재활용처리</NavLink>
                 </nav>
-
             </header>
 
             <header className="header-Top">

@@ -20,43 +20,66 @@ const localizer = dateFnsLocalizer({
 
 const MyCalendar = () => {
     const [events, setEvents] = useState([]);
-    const API_KEY = process.env.REACT_APP_WEATHER_KEY2;
+    const [lastFetched, setLastFetched] = useState(null);
+
 
     useEffect(() => {
+        const now = Date.now();
+        // 1시간 이내에 데이터가 이미 가져와졌다면 캐시된 데이터를 사용
+        if (lastFetched && now - lastFetched < 60 * 60 * 1000) {
+            return;
+        }
+
         navigator.geolocation.getCurrentPosition(async (position) => {
             const { latitude, longitude } = position.coords;
-            const response = await axios.get(`http://api.weatherbit.io/v2.0/forecast/daily`, {
-                params: {
-                    key: API_KEY,
-                    lat: latitude,
-                    lon: longitude,
-                    days: '16'
-                }
-            })
-                .then(response => {
-                    const weatherData = response.data.data;
-                    const weatherEvents = weatherData.map(day => ({
-                        title: `${day.weather.description}, Temp: ${day.temp}°C`,
-                        start: new Date(day.valid_date),
-                        end: new Date(day.valid_date),
-                        allDay: true
-                    }));
-                    setEvents(weatherEvents);
-                })
-                .catch(error => console.error('날씨 데이터를 가져오는 중 오류 발생:', error));
+            try {
+                const response = await axios.get(`https://api.weatherbit.io/v2.0/forecast/daily`, {
+                    params: {
+                        key: 'a30883f85d544928864f19eac413ab7b',
+                        lat: latitude,
+                        lon: longitude,
+                        days: '16'
+                    }
+                });
+                const weatherData = response.data.data;
+                const weatherEvents = weatherData.map(day => ({
+                    title: `${day.weather.description}, Temp: ${day.temp}°C`,
+                    iconUrl: `https://www.weatherbit.io/static/img/icons/${day.weather.icon}.png`,
+                    start: new Date(day.valid_date),
+                    end: new Date(day.valid_date),
+                    allDay: true
+                }));
+                setEvents(weatherEvents);
+                setLastFetched(Date.now()); // 캐시 시간을 업데이트합니다.
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
         });
-    }, [API_KEY]);
+    },);
 
     return (
-        <div style={{ height: '700px', width: '100%' }}>
+        <div style={{marginTop: '30px', height: '800px', width: '100%' }}>
             <Calendar
                 localizer={localizer}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 500 }}
+                components={{
+                    event: EventComponent  // 커스텀 이벤트 컴포넌트 사용
+                }}
             />
         </div>
+    );
+};
+
+// 커스텀 이벤트 컴포넌트 정의
+const EventComponent = ({ event }) => {
+    return (
+        <span>
+            <img src={event.iconUrl} alt="Weather icon" style={{ width: 30, verticalAlign: 'middle' }} />
+            <strong>{event.title}</strong>
+        </span>
     );
 };
 

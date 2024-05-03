@@ -134,3 +134,13 @@
     /* 기존 스타일 유지하면서 추가 */
     line-height: 1.2; /* 기본값은 보통 1.4 ~ 1.6, 여기서는 줄 간격을 줄입니다 */
 }
+@media (max-width: 768px){
+  .ChatbotIn {
+    width: 19em;
+    height: 35em;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    }
+
+}
