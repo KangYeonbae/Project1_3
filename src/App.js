@@ -1,5 +1,4 @@
 import './App.css';
-import Forgine from "./router/forgine";
 import MyMap from "./router/KakaoMap";
 import Weather from "./router/weather";
 import React, { useState, useEffect } from "react";
@@ -11,15 +10,13 @@ import {TiWeatherWindyCloudy} from "react-icons/ti";
 import LoginPage from "./router/login";
 import LogoutPage from "./router/logout";
 import AutoSwitchingViewer from "./router/edust"
-import RecyclingCenters from "./router/sidebar"
-import ZeroCenters from "./router/zerobar"
-import NapronCenters from "./router/BarNapron"
 import Search_location from "./router/search_location";
 import Search_location_car from "./router/search_location_car";
 import ChartComponent from "./router/Chart"
 import {GiEcology, GiHamburgerMenu} from "react-icons/gi";
 import {FaBusAlt, FaCar} from "react-icons/fa";
 import {FaPersonWalking, FaTrainSubway} from "react-icons/fa6";
+import RealtimeLineChart from "./router/realtimechart";
 
 function App() {
     let navigate = useNavigate();
@@ -116,7 +113,9 @@ function App() {
 
             <section className="main-con">
                 <Routes>
-                    <Route path="/" element={<div className="Info">
+                    <Route path="/" element={
+                        <div className = "Info_main">
+                        <div className="Info">
 
                         <h1>Echo Recycling Hub</h1>
                         <h2> 환영합니다! </h2>
@@ -130,7 +129,10 @@ function App() {
                         <p> 우리는 지구를 위한 작은 변화가 모여 큰 변화를 이끌어낼 수 있다고 믿습니다. 함께하는 모든 분들의 작은 노력이 우리의 환경을 더욱</p>
                         <p> 건강하고 지속 가능하게 만들어갈 것입니다.</p>
                         <p> 지금 바로 이 웹 페이지를 통해 우리의 환경을 위한 첫걸음을 내딛어보세요. 함께라면 가능합니다!</p>
-                    </div>}/>
+                    </div>
+                        <RealtimeLineChart/>
+                    </div>
+                    }/>
                     <Route path="/MyMap"
                            element={<MyMap/>}/>
                     <Route path="/login"

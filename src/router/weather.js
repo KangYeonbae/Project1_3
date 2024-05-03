@@ -32,9 +32,9 @@ function Weather() {
 
     return (
         <div>
-            <h1>{weatherData.name}</h1>
-            <p>{(weatherData.main.temp - 273.15).toFixed(1)}℃</p>
-            <p>{weatherData.weather[0].description}</p>
+            <p>
+                <h1>{weatherData.name}</h1> {(weatherData.main.temp - 273.15).toFixed(1)}℃    {weatherData.weather[0].description}
+            </p>
         </div>
     );
 }

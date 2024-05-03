@@ -30,7 +30,6 @@ button:last-child { border: none; }
     font-size: 20px;
     padding-top: 5px;
 }
-
 /* hover */
 .map-btn button:hover {
     color: #fff;
@@ -38,3 +37,28 @@ button:last-child { border: none; }
     background: #178844;
 }
 .map-btn button:hover svg path { color: #fff; }
+
+/* search result */
+.sidebar {
+    overflow: auto;
+    scrollbar-width: none;
+}
+
+.search-result {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    background: #eee;
+    margin: 16px 3px;
+}
+.result { padding: 10px 0; }
+
+/* input area */
+
+.search-location1 {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 40px;
+}

@@ -17,9 +17,25 @@ body {
   height: 90vh;
 }
 
+.Info_main{
+  width: 100%;
+}
 .Info{
-  margin-top: 140px;
-  padding: 20px;
+  background: #f4f4f4; /* 연한 회색 배경 */
+  padding: 40px; /* 콘텐츠 주변의 패딩 */
+  border-radius: 8px; /* 둥근 모서리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 상자 그림자 */
+  font-family: 'Open Sans', sans-serif; /* 폰트 스타일 */
+  width: 800px;
+  margin: 50px 250px;
+  float: left;
+  height: 700px;
+}
+.chart-container3 {
+  width: 30%;
+  height: 350px;
+  float: left;
+  margin: 50px 50px;
 }
 .header-Top {
   display: flex;
@@ -64,14 +80,6 @@ body {
 }
 
 
-/*.gradient-text {*/
-/*  background-image: linear-gradient(45deg, #3496fe, #178844 50%);*/
-/*  -webkit-background-clip: text;*/
-/*  background-clip: text;*/
-/*  color: transparent;*/
-/*  margin : 0 auto;*/
-/*  }*/
-
 .top-nav {
   display: flex;
   justify-content: space-between;
@@ -115,7 +123,10 @@ body {
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
-.main-con { position: relative; }
+.main-con {
+  position: relative;
+  margin: 0 auto;
+}
 
 .Map {
   width: 100%; /* 사이드바의 너비를 고려한 지도의 너비 */
@@ -194,13 +205,6 @@ body {
   background: #3496fe;
   color: #fff;
 }
-.search-location {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
 .start-btn, .end-btn {
   width: 16px;
   height: 16px;
@@ -222,7 +226,7 @@ body {
   padding: 0 16px;
   display: flex;
 }
-.search-cate li { padding-right: 20px; }
+.search-cate li { padding-right: 40px; }
 .search-cate svg {
   color: #252525;
   transition: all .2s ease;
@@ -356,14 +360,14 @@ body {
   cursor: pointer;
 }
 
-.Info {
-  background: #f4f4f4; /* 연한 회색 배경 */
-  padding: 40px; /* 콘텐츠 주변의 패딩 */
-  border-radius: 8px; /* 둥근 모서리 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 상자 그림자 */
-  max-width: 800px; /* 최대 너비 */
-  margin: 40px auto; /* 가운데 정렬을 위한 자동 마진 */
-  font-family: 'Open Sans', sans-serif; /* 폰트 스타일 */
+.munji_map{
+  float: left;
+  margin: 30px 50px;
+  width: 60%;
+}
+.calendar_big{
+  float: left;
+  width: 30%;
 }
 
 .Info h1, .Info h2, .Info p {
@@ -404,28 +408,20 @@ body {
 
 /* 모바일 화면에서 네비게이션 스타일 */
 @media (max-width: 768px) {
-  .App {
-    flex-direction: column-reverse; /* 사이드바를 지도 아래로 */
-  }
-
   .main-con {
     width: 100%; /* 지도가 화면 너비를 100% 차지하도록 */
     height: 50vh; /* 원하는 높이로 설정, 예를 들어 화면 높이의 절반 */
     /* 다른 스타일 */
   }
-  /*.sidebar {*/
-  /*  margin-top: 0;*/
-  /*  width: 100%; !* 사이드바가 화면 너비를 100% 차지하도록 *!*/
-  /*  height: 50vh; !* 나머지 높이를 차지하도록, 예를 들어 화면 높이의 절반 *!*/
-  /*  !* 다른 스타일 *!*/
-  /*}*/
 
   .nav-links {
     margin-top: 10px;
   }
-
   .nav-info {
     margin-top: 10px;
+  }
+  .Info_main{
+    width: 100%;
   }
   .Map {
     width: 100vw; /* 화면의 전체 너비 */
@@ -434,5 +430,28 @@ body {
   }
   .Info {
     padding: 20px; /* 모바일에서의 패딩 */
+    margin: 0;
   }
+  .sidebar {
+    width: 100% !important; /* 사이드바가 화면 너비를 100% 차지하도록 */
+    height: 60vh !important; /* 나머지 높이를 차지하도록, 예를 들어 화면 높이의 절반 */
+    position: fixed !important;
+    bottom: 0 !important;
+    margin-top: 40vh !important;
+    margin-left: -20px;
+  }
+
+  .top-nav {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .small_nav{
+    margin-left: -10px;
+    padding-bottom: 0 ;
+  }
+  .small_nav .nav_button{
+    margin: 10px;
+  }
+
 }

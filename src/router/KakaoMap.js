@@ -6,9 +6,10 @@ import {
     ZoomControl,
     Polygon,
     MapInfoWindow,
-    Polyline
+    Polyline,
+    useMap
 } from "react-kakao-maps-sdk";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import proj4 from 'proj4';
 import "bootstrap/js/dist/collapse";
 import "../css/KakaoMap.css";
@@ -21,6 +22,7 @@ import {NavLink} from "react-router-dom";
 import Weather from "./weather";
 import {FaBusAlt, FaCar} from "react-icons/fa";
 import {FaPersonWalking, FaTrainSubway} from "react-icons/fa6";
+import {add} from "proj4/lib/projections";
 
 
 function MyMap() {
@@ -30,7 +32,7 @@ function MyMap() {
         setSelectedMarker(markerData);
     };
 
-    let[openZero, setOpenZero] = useState(false);
+    let [openZero, setOpenZero] = useState(false);
     const [selectZeroshop, setSelectZeroshop] = useState(null);
 
     const toggleView = (view) => {
@@ -42,10 +44,10 @@ function MyMap() {
         setSelectZeroshop(selectZeroshop);
     };
 
-    let[napronOpen, setNapronOpen] = useState(false);
+    let [napronOpen, setNapronOpen] = useState(false);
     const [selectNapron, setSelectNapron] = useState(null);
 
-    const handleSelectNapron = (napron) =>{
+    const handleSelectNapron = (napron) => {
         setSelectNapron(napron)
     }
 
@@ -67,7 +69,7 @@ function MyMap() {
 
 
     const [selectZeroWaste, setSelectZeroWaste] = useState(null);
-    const [zeroWastes, setzeroWastes] = useState(['제로마켓', '서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주도']);
+    const [zeroWastes, setzeroWastes] = useState(['제로마켓', '서울', '경기', '인천', '강원도', '충청도', '경상도', '전라도', '제주도']);
 
     const handleZeroWasteSelection = (zeroWaste) => {
         // 현재 선택된 카테고리가 다시 클릭되면 선택 해제
@@ -80,12 +82,12 @@ function MyMap() {
 
 
     const [selectMark, setSelectZeroMark] = useState(null);
-    const [zeroMarks, setzeroMarks] = useState(['서울', '경기', '인천', '강원도', '충청도','경상도', '전라도', '제주']);
+    const [zeroMarks, setzeroMarks] = useState(['서울', '경기', '인천', '강원도', '충청도', '경상도', '전라도', '제주']);
 
-    const handleMarkSecletion = (zeroMark) =>{
-        if(selectMark === zeroMark) {
+    const handleMarkSecletion = (zeroMark) => {
+        if (selectMark === zeroMark) {
             setSelectZeroMark(null);
-        }else {
+        } else {
             setSelectZeroMark(zeroMark);
         }
     }
@@ -99,7 +101,8 @@ function MyMap() {
 
     const [map, setMap] = useState();
 
-    const [center, setCenter] = useState({ lat: 37.558185572111356, lng: 127.00091673775184 });
+    const [center, setCenter] = useState({lat: 37.558185572111356, lng: 127.00091673775184});
+
     const [level, setLevel] = useState(9);
 
 
@@ -107,42 +110,83 @@ function MyMap() {
         setMap(map);
     };
 
-    const [currentPosition, setCurrentPosition] = useState(null);  // 사용자의 현재 위치를 저장할 상태
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [error, setError] = useState(null);
 
 
-// 사용자 위치로 이동하는 함수
+    // 내위치로 이동
     const moveToCurrentLocation = () => {
         if (!navigator.geolocation) {
             alert("Geolocation is not supported by this browser.");
             return;
         }
-
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
                 const newCenter = { lat: latitude, lng: longitude };
-                setCenter(newCenter);
-                setCurrentPosition(newCenter);  // 현재 위치를 상태에 저장
-                setLevel(3);  // 줌 레벨 조정
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
+
+                setLatitude(latitude);
+                setLongitude(longitude);
+                setCenter(newCenter); // 직접 center 상태를 업데이트
+                setLevel(3); // 확대 레벨 설정
+                fetchAddress(latitude, longitude); // 주소 조회
+
                 setError(null);
             },
             (error) => {
                 console.error("Error fetching current location:", error);
+                setError("현재 위치를 가져올 수 없습니다.");
                 alert("현재 위치를 가져올 수 없습니다.");
             },
             { enableHighAccuracy: true }
         );
     };
 
+
+    const fetchAddress = (lat, lng) => {
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2Address(lng, lat, function (results, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                const addressName = results[0].address.address_name;
+                setUserAddress(addressName);
+            }
+        });
+    };
+
+    // 내위치 마크이동핸들러
+    const handleMarkerDragEnd = (marker) => {
+        const position = marker.getPosition();
+        const newLatitude = position.getLat();
+        const newLongitude = position.getLng();
+
+        setLatitude(newLatitude);
+        setLongitude(newLongitude);
+
+        setCenter({ lat: newLatitude, lng: newLongitude });
+
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2Address(newLongitude, newLatitude, function (results, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                const addressName = results[0].address.address_name;
+                setUserAddress(addressName);
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (map && center) {
+            map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+            map.setLevel(level);
+        }
+    }, [map, center, level]);
+
+
     const [loading, setLoading] = useState(false);
     const [clickedLat, setClickedLat] = useState(null);
     const [clickedLng, setClickedLng] = useState(null);
-
+    const [userAddress, setUserAddress] = useState("");  // 주소 상태
+    const [address, setAddress] = useState("");  // 주소 상태
 
     // handleFetchData 함수 수정
     const handleFetchData = async () => {
@@ -213,6 +257,7 @@ function MyMap() {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentItems = sidos.slice(startIndex, endIndex);
+
     const renderBusRoutes = () => {
         return busRoutes.map((route, index) => {
             console.log("Route Data:", route);  // 각 노선 데이터 로깅
@@ -252,22 +297,30 @@ function MyMap() {
         const Maplng = Maplatlng.getLng().toFixed(7);
         setClickedLat(Maplat); // 클릭한 위도 저장
         setClickedLng(Maplng); // 클릭한 경도 저장
-        setMarkerPosition({ lat: parseFloat(Maplat), lng: parseFloat(Maplng) });
+        setMarkerPosition({lat: parseFloat(Maplat), lng: parseFloat(Maplng)});
     };
 
-
     // 클릭한 마커위치 주소로바꾸기
-
-
-
-
-
     useEffect(() => {
-        if (map) {
-            map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
-            map.setLevel(level);
-        }
-    }, [map, center, level]);
+        // Geocoder 객체생성
+        const geocoder = new kakao.maps.services.Geocoder();
+        const lookupAddress = () => {
+            if (clickedLat && clickedLng) {
+                // 좌표를 주소로 변환
+                geocoder.coord2Address(clickedLng, clickedLat, function (results, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        setAddress(results[0].address.address_name);
+                    } else {
+                        setAddress("주소를 찾을 수 없습니다.")
+                    }
+                });
+            }
+        };
+
+        lookupAddress();
+    }, [clickedLat, clickedLng]);
+
+
 
     // 자동차 길찾기
     const [carRoutes, setCarRoutes] = useState([]);
@@ -291,6 +344,8 @@ function MyMap() {
         ));
     };
 
+
+    // 버스길찾기 정보창
     const [fullRoutesDetails, setFullRoutesDetails] = useState([]);
     const renderFullRouteDetails = () => {
         return fullRoutesDetails.map((detail, index) => {
@@ -301,23 +356,22 @@ function MyMap() {
             const distance = detail.distance || "Not available";
 
             return (
-                <div key={index}>
-                    <h3>Routes Information</h3>
+                <div className="search-result" key={index}>
+                    <h3 className="result-time">{time}분</h3>
+                    <p className="result-distance">{distance}m</p>
+                    {/*<h3>검색결과</h3>*/}
                     {pathList.map((path, idx) => (
-                        <div key={idx}>
-                            <p>Route Name: {path.routeNm || "Not available"}</p>
-                            <p>Departure: {path.fname || "Not available"}</p>
-                            <p>Arrival: {path.tname || "Not available"}</p>
+                        <div className="result" key={idx}>
+                            <p className="result-transport">{path.routeNm || "Not available"}</p>
+                            <p>{path.fname || "Not available"} 승차</p>
+                            <p>{path.tname || "Not available"} 하차</p>
                         </div>
                     ))}
-                    <p>Total Time: {time} minutes</p>
-                    <p>Total Distance: {distance} meters</p>
+                    <button>경로보기</button>
                 </div>
             );
         });
     };
-
-
 
 
     // 교통정보 토글 함수
@@ -326,30 +380,26 @@ function MyMap() {
         setMapTypeId(traffic ? null : "TRAFFIC");
     };
 
-// 로드뷰 토글 함수
+    // 로드뷰 토글 함수
     const toggleRoadView = () => {
         setMapTypeId(mapTypeId === "ROADVIEW" ? null : "ROADVIEW");
     };
 
-// 지적편집도 토글 함수
+    // 지적편집도 토글 함수
     const toggleUseDistrict = () => {
         setMapTypeId(mapTypeId === "USE_DISTRICT" ? null : "USE_DISTRICT");
     };
 
-
-
-    useEffect(() => {
-        const fetchCityData = async () => {
+    const handleFetchCityData = async () => {
+        if (cityData.length === 0) {  // 데이터가 로드되지 않았다면 데이터 로드
             try {
                 const response = await fetch('http://localhost:5000/city');
                 if (!response.ok) {
                     throw new Error('데이터를 불러올 수 없습니다.');
                 }
-                const jsonData = await response.text(); // 서버에서 받은 JSON 문자열
-                const firstParse = JSON.parse(jsonData); // 첫 번째 파싱으로 외부 문자열 제거
-                const dataObj = JSON.parse(firstParse); // 두 번째 파싱으로 실제 JSON 객체 추출
-
-                console.log(dataObj); // 실제 데이터 구조 확인
+                const jsonData = await response.text();
+                const firstParse = JSON.parse(jsonData);
+                const dataObj = JSON.parse(firstParse);
 
                 const utmkDef = '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=bessel +units=m +no_defs';
                 const wgs84Def = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
@@ -375,23 +425,26 @@ function MyMap() {
                 console.error('데이터를 불러오는 중 오류 발생:', error);
                 setCityData([]);
             }
-        };
-
-        fetchCityData();
-    }, []);
+        }
+        setShowMap(!showMap);  // 지도 표시 상태 토글
+    };
 
 
     const [selectedArea, setSelectedArea] = useState(null);
     const [hoverArea, setHoverArea] = useState(null);
 
     const handleClick = (area) => {
-        if(selectedArea && selectedArea.properties.시군구명 === area.properties.시군구명){
+        if (selectedArea && selectedArea.properties.시군구명 === area.properties.시군구명) {
             setSelectedArea(null);
-        }else{
+        } else {
             setSelectedArea(area);
         }
 
     };
+
+
+    const [showMap, setShowMap] = useState(false);
+
 
     const [allMarkers, setAlltMarkers] = useState([]);
     const [RMarkers, setRMarkers] = useState([]);
@@ -426,7 +479,6 @@ function MyMap() {
     };
 
 
-
     useEffect(() => {
         if (selectMark && allMarkers.length > 0) {
             const matchingRule = MarkRules[selectMark];
@@ -442,7 +494,6 @@ function MyMap() {
         }
 
     }, [selectMark, allMarkers]);
-
 
 
     const [allData, setAllData] = useState([]); // 전체 데이터
@@ -484,14 +535,13 @@ function MyMap() {
     };
 
 
-
 // 시도 선택 핸들러
     useEffect(() => {
         console.log(selectedSido)
         if (selectedSido && allData.length > 0) {
             const matchsidoData = sidosRules[selectedSido];
             console.log(matchsidoData)
-            if(matchsidoData) {
+            if (matchsidoData) {
                 const filterWaste = allData.filter(item => {
                     const result = matchsidoData(item.SIDO);
                     return result;
@@ -508,7 +558,7 @@ function MyMap() {
     const [wasteAll, setwasteAll] = useState([]);
     const [wasteMarker, setWasteMarker] = useState([]);
 
-    useEffect (() => {
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:3001/zero')
@@ -553,7 +603,7 @@ function MyMap() {
 
     return (
         <>
-            <section className="sidebar" style={{marginTop : "-130px"}}>
+            <section className="sidebar" style={{marginTop: "-130px"}}>
                 {reshop &&
                     <RecyclingCenters closeReshop={() => setReashop(false)} setReashop={setReashop} reshop={reshop}
                                       markerData={selectedMarker}/>}
@@ -582,14 +632,9 @@ function MyMap() {
                         <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
                     </div>
                     <div className="search-location">
-                        {/*<BsArrowRightCircle className="start-point" />*/}
-                        <input
-                            className="start-place"
-                            placeholder="출발지를 입력하세요."/>
-                        <input
-                            className="end-place"
-                            placeholder="도착지 : 지도를 클릭하세요."/>
-                        {/*<BsArrowLeftCircle  className="end-point"/>*/}
+                        <div className="search-location1">{userAddress}</div>
+                        <div className="search-location1">{address}</div>
+
                     </div>
 
                     <div className="search-cate">
@@ -601,7 +646,7 @@ function MyMap() {
                         </ul>
                         <button className="search-btn" onClick={handlBusData}>길찾기</button>
                     </div>
-                    <div>
+                    <div className="result-trans">
                         {renderRouteDetails()}
                         {renderFullRouteDetails()}
                     </div>
@@ -651,24 +696,24 @@ function MyMap() {
                     <ZoomControl position={"RIGHT"}/>
 
                     {/*서울지도표시*/}
-                    {/*{cityData.map((area, index) => (*/}
-                    {/*    <Polygon*/}
-                    {/*        key={index}*/}
-                    {/*        path={area.geometry.coordinates[0].map(coord => ({ lat: coord[1], lng: coord[0] }))}*/}
-                    {/*        strokeWeight={3}*/}
-                    {/*        strokeColor="#004c80"*/}
-                    {/*        strokeOpacity={0.8}*/}
-                    {/*        fillColor={*/}
-                    {/*            selectedArea === area ? "rgba(0, 0, 0, 0)" :*/}
-                    {/*                hoverArea === area ? "#09f" :*/}
-                    {/*                    "#fff"*/}
-                    {/*        } // 조건부 색상 변경*/}
-                    {/*        fillOpacity={0.7}*/}
-                    {/*        onMouseover={() => setHoverArea(area)}*/}
-                    {/*        onMouseout={() => setHoverArea(null)}*/}
-                    {/*        onClick={() => handleClick(area)}*/}
-                    {/*    />*/}
-                    {/*))}*/}
+                    {showMap && cityData.map((area, index) => (
+                        <Polygon
+                            key={index}
+                            path={area.geometry.coordinates[0].map(coord => ({ lat: coord[1], lng: coord[0] }))}
+                            strokeWeight={3}
+                            strokeColor="#004c80"
+                            strokeOpacity={0.8}
+                            fillColor={
+                                selectedArea === area ? "rgba(0, 0, 0, 0)" :
+                                    hoverArea === area ? "#09f" :
+                                        "#fff"
+                            } // 조건부 색상 변경
+                            fillOpacity={0.7}
+                            onMouseover={() => setHoverArea(area)}
+                            onMouseout={() => setHoverArea(null)}
+                            onClick={() => handleClick(area)}
+                        />
+                    ))}
                     {carRoutes.map((route, index) => {
                         const path = route.sections.flatMap(section =>
                             section.roads.flatMap(road =>
@@ -704,9 +749,9 @@ function MyMap() {
 
                     )}
                     {/*내위치마커*/}
-                    {currentPosition && (
+                    {latitude && longitude && (
                         <MapMarker
-                            position={currentPosition}
+                            position={{ lat: latitude, lng: longitude }}
                             image={{
                                 src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
                                 size: {
@@ -715,8 +760,10 @@ function MyMap() {
                                 }
                             }}
                             draggable={true}
+                            onDragEnd={(marker) => handleMarkerDragEnd(marker)}
                         />
                     )}
+
 
                     {/*로드뷰, 지형뷰등*/}
                     {mapTypeId && <MapTypeId type={mapTypeId}/>}
@@ -805,7 +852,7 @@ function MyMap() {
                         <button onClick={toggleTraffic}>교통정보</button>
                         <button onClick={toggleRoadView}>로드뷰</button>
                         <button onClick={toggleUseDistrict}>지적편집도</button>
-                        {/*<button onClick={handleFetchData}>자동차길찾기</button>*/}
+                        <button onClick={handleFetchCityData}>서울지도</button>
                         {/*<button onClick={handlBusData}>버스길찾기</button>*/}
                         <button onClick={moveToCurrentLocation}>내 위치</button>
                     </ul>

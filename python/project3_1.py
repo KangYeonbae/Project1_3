@@ -1,3 +1,5 @@
+import random as rnd  # 이름 변경
+
 import cx_Oracle
 from flask import Flask, jsonify, request, send_from_directory
 from flask_restful import Resource, Api
@@ -20,6 +22,16 @@ app.debug = True
 #API Key(강연배)
 access_key = 'y+MUXWRZdywDBDs64HplB3XAbAYdvxWcQ54m88FRrpMBgZAm1tcqkUc8xkXrtl4eRgFiJLN2Tmi/2iJp8tQX9A=='
 
+
+@app.route('/api/random-data')
+def random_data():
+    random_number = rnd.randint(0, 150)  # 변경된 모듈 이름 사용
+    return jsonify({'value': random_number})
+
+@app.route('/api/random-data1')
+def random_data1():
+    random_number = rnd.randint(0, 99)  # 변경된 모듈 이름 사용
+    return jsonify({'value': random_number})
 
 @app.route('/location', methods=['GET', 'POST'])
 def receive_location():
