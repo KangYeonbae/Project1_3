@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=slice)
+![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=Waving!&fontAlignY=40)
 # Eco Recyle Hub(에코 리사이클 허브)
 
  Codelab Academi, AICC 3th_project  
