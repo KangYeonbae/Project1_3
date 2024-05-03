@@ -1,3 +1,4 @@
+![header](https://capsule-render.vercel.app/api?type=wave&color=auto&height=300&section=header&text=capsule%20render&fontSize=90)
 # Eco Recyle Hub(에코 리사이클 허브)
 
  Codelab Academi, AICC 3th_project  
@@ -47,6 +48,7 @@
 
 ## 차후 개선 포인트
 + 전반적인 UI 리뉴얼
++ 날씨 API를 이용해 실시간 온도 및 날씨 반영
 + 
 
 ## API
