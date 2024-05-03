@@ -96,15 +96,15 @@
 
 - - -
 ## API
-Open Weather(https://openweathermap.org/)
-리액트 카카오맵(https://react-kakao-maps-sdk.jaeseokim.dev/)
+Open Weather(https://openweathermap.org/)  
+리액트 카카오맵(https://react-kakao-maps-sdk.jaeseokim.dev/)  
 서울특별시_대중교통환승경로 조회 서비스(https://www.data.go.kr/iim/api/selectAPIAcountView.do)
 
 ## 라이브러리
-react-icons
-react-bootstrap
+react-icons  
+react-bootstrap  
 
 ## 자료제공
-자원순환마루(https://www.recycling-info.or.kr/rrs/main.do)
-공공데이터포털_전국재활용센터표준데이터(https://www.data.go.kr/data/15021108/standard.do)
+자원순환마루(https://www.recycling-info.or.kr/rrs/main.do)  
+공공데이터포털_전국재활용센터표준데이터(https://www.data.go.kr/data/15021108/standard.do)  
 공공데이터포털()
