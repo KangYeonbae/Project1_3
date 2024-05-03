@@ -1,9 +1,7 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=Eco%20Recycl%20nHub!&fontAlignY=40)
 # Eco Recyle Hub(에코 리사이클 허브)
 
- Codelab Academi, AICC 3th_project  
- (강연배, 김인수, 이지우, 김은지)
- 
+
  ## 프로젝트 소개
 
 >이 프로젝트는 이용자, 더 나아가 우리 모두에게 재활용 생활화를 독려하며 유용한 정보와 서비스를 제공을 목표로 합니다.
@@ -12,6 +10,9 @@
 >
 >이를 통해 우리는 각자의 일상 속에서 환경을 생각하고 실천을 독려하고자 합니다.
 - - -
+## 팀원 소개
+코드랩 아카데미 AI 인공지능컨택센터(AICC) 웹서비스개발 1차(23/12/21 ~ 24/06/26)
+강연배, 김인수, 이지우, 김은지
 
 ## 개발 기간
 - 2024.04.05(금) ~ 2024.05.03(금)
@@ -20,8 +21,6 @@
 - 역할 배분
 - UI/UX디자인
 - API
-
-## 팀원 소개
 
 ## 개발환경
 - IDE: IntelliJ, Pycham
