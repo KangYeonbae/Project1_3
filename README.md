@@ -55,8 +55,10 @@ http://54.82.4.76:3000/
 - NodeJS
 - Express
 - React
+- CSS3
 - Python
-- AWS
+- OracleDB
+- AWS EC2
 
 ## 기획안
 - 주제선정:
