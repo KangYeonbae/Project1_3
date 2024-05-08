@@ -49,6 +49,7 @@ http://54.82.4.76:3000/
 ## 개발환경
 - IDE: IntelliJ, Pycham
 - Server: NodeJS
+- DataBase: OracleDB
 - Design: Figma
 
 ## 기술 스택
