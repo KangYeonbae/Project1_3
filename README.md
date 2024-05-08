@@ -49,20 +49,17 @@ http://54.82.4.76:3000/
 ## 개발환경
 - IDE: IntelliJ, Pycham
 - Server: NodeJS
-- DataBase: OracleDB
 - Design: Figma
 
 ## 기술 스택
 - NodeJS
 - Express
 - React
-- CSS3
 - Python
-- OracleDB
-- AWS EC2
+- AWS
 
 ## 기획안
-- 주제선정:
+- 주제선정:"지속 가능한 재활용 시스템이 구축되면 전국 폐기물 발생량이 감소할 것이다"라는 가설을 가지고 사용자들의 재활용 생활화를 독려하며 유용한 정보와 서비스를 제공하는 것을 목표로 하고 있습니다. 
 
 ## 프로젝트 아키텍쳐
 
@@ -334,4 +331,5 @@ react-bootstrap
 ## 자료제공
 자원순환마루(https://www.recycling-info.or.kr/rrs/main.do)  
 공공데이터포털_전국재활용센터표준데이터(https://www.data.go.kr/data/15021108/standard.do)  
-공공데이터포털()
+공공데이터포털-서울특별시_노선정보조회서비스(https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15000193)
+공공데이터포털-서울특별시_대중교통환승경로 조회 서비스(https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15000414)
