@@ -18,8 +18,18 @@ http://54.82.4.76:3000/
 코드랩 아카데미 AI 인공지능컨택센터(AICC) 웹서비스개발 1차(23/12/21 ~ 24/06/26)  
 강연배, 김인수, 이지우, 김은지
 
+## 기술스택
+![Static Badge](https://img.shields.io/badge/React-%2361DAFB?style=for-the-badge&logo=react&logoColor=%2361DAFB&labelColor=black)
+![Static Badge](https://img.shields.io/badge/Python-%233776AB?style=for-the-badge&logo=python&logoColor=%233776AB&labelColor=black)
+![Static Badge](https://img.shields.io/badge/NodeJs-%235FA04E?style=for-the-badge&logo=nodedotjs&logoColor=%235FA04E&labelColor=black)
+![Static Badge](https://img.shields.io/badge/Css-%231572B6?style=for-the-badge&logo=css3&logoColor=%231572B6&labelColor=black)
+![Static Badge](https://img.shields.io/badge/AWS-AWS-orange?style=for-the-badge&logo=amazonwebservices&logoColor=orange&labelColor=black)
+
+
+
 ## 개발 기간
-### 2024.04.05(금) ~ 2024.05.03(금)
+###  3차 프로젝트 : 2024.04.05(금) ~ 2024.05.03(금)
+###  4차 프로젝트 : 2024.05.31(금) ~ 2024.06.28(금)
   + 04/05 ~ 04/12
     + 기술 스택 회의
     + 자료 수집과 선정
@@ -55,12 +65,6 @@ http://54.82.4.76:3000/
 - Server: NodeJS
 - Design: Figma
 
-## 기술 스택
-- NodeJS
-- Express
-- React
-- Python
-- AWS
 
 ## 기획안
 - 주제선정:"지속 가능한 재활용 시스템이 구축되면 전국 폐기물 발생량이 감소할 것이다"라는 가설을 가지고 사용자들의 재활용 생활화를 독려하며 유용한 정보와 서비스를 제공하는 것을 목표로 하고 있습니다. 
