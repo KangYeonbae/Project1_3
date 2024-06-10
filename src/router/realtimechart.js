@@ -8,8 +8,8 @@ const RealtimeLineChart = () => {
 
     useEffect(() => {
         const fetchRandomData = () => {
-            fetch('http://localhost:5000/api/random-data')
-            // fetch('http://54.82.4.76:5000/api/random-data')
+            // fetch('http://localhost:5000/api/random-data')
+                fetch('http://54.82.4.76:5000/api/random-data')
                 .then(response => response.json())
                 .then(data => {
                     // data 객체에서 value를 추출하여 배열에 추가
@@ -19,8 +19,8 @@ const RealtimeLineChart = () => {
         };
 
         const fetchRandomData1 = () => {
-            fetch('http://localhost:5000/api/random-data1')
-            // fetch('http://54.82.4.76:5000/api/random-data1')
+            // fetch('http://localhost:5000/api/random-data1')
+                fetch('http://54.82.4.76:5000/api/random-data1')
                 .then(response => response.json())
                 .then(data => {
                     // data 객체에서 value를 추출하여 배열에 추가
@@ -158,7 +158,7 @@ const RealtimeLineChart = () => {
             });
             setChartInstance1(chart2);
         }
-        }, [chartInstance1]);
+    }, [chartInstance1]);
 
     useEffect(() => {
         if (!chartInstance1) return;

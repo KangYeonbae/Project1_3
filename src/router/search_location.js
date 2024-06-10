@@ -35,7 +35,8 @@ function SearchLocation() {
     const handlBusData = async () => {
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:5000/location', {
+            // const response = await axios.post('http://54.82.4.76:5000/location', {
+            const response = await axios.post('http://localhost/location', {
                 currentLatitude: latitude,
                 currentLongitude: longitude,
                 clickedLatitude: clickedLat,

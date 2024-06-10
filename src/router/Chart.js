@@ -11,10 +11,11 @@ function ChartComponent() {
     const [chartInstance20, setChartInstance20] = useState(null);
     useEffect(() => {
         fetch('http://localhost:3001/home1') // 서버 API URL에 따라 바꾸세요
+        // fetch('http://54.82.4.76:3000/year2020') // 서버 API URL에 따라 바꾸세요
             .then(response => response.json())
             .then(fetchedData => {
-                fetchedData.sort((a, b) => a.YEAR - b.YEAR);
                 setServerData20(fetchedData);// 서버에서 가져온 데이터를 상태에 저장
+                console.log(serverData20)
             })
             .catch(error => {
                 console.error('Fetching data failed:', error);
@@ -30,9 +31,9 @@ function ChartComponent() {
     const [chartInstance15, setChartInstance15] = useState(null);
     useEffect(() => {
         fetch('http://localhost:3001/home')
+        // fetch('http://54.82.4.76:3000/year2015')
             .then(response => response.json())
             .then(fetchedData => {
-                fetchedData.sort((a, b) => a.YEAR - b.YEAR);
                 setServerData15(fetchedData);
             })
             .catch(error => {

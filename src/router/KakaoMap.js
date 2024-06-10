@@ -119,6 +119,15 @@ function MyMap() {
     const moveToCurrentLocation = () => {
         if (!navigator.geolocation) {
             alert("Geolocation is not supported by this browser.");
+            // 내가 원하는 기본 위치로 지도 중심 설정
+            const defaultLatitude = 37.47713483253; // 기본 위도값
+            const defaultLongitude = 126.88014275474; // 기본 경도값
+            setLatitude(defaultLatitude);
+            setLongitude(defaultLongitude);
+            setCenter({ lat: defaultLatitude, lng: defaultLongitude }); // 기본 위치로 지도 중심 설정
+            setLevel(3); // 확대 레벨 설정
+            fetchAddress(defaultLatitude, defaultLongitude); // 기본 위치의 주소 조회
+
             return;
         }
         navigator.geolocation.getCurrentPosition(
@@ -128,7 +137,7 @@ function MyMap() {
 
                 setLatitude(latitude);
                 setLongitude(longitude);
-                setCenter(newCenter); // 직접 center 상태를 업데이트
+                setCenter(newCenter); // 현재 위치로 지도 중심 설정
                 setLevel(3); // 확대 레벨 설정
                 fetchAddress(latitude, longitude); // 주소 조회
 
@@ -137,11 +146,20 @@ function MyMap() {
             (error) => {
                 console.error("Error fetching current location:", error);
                 setError("현재 위치를 가져올 수 없습니다.");
-                alert("현재 위치를 가져올 수 없습니다.");
+
+                // 내가 원하는 기본 위치로 지도 중심 설정
+                const defaultLatitude = 37.47713483253; // 기본 위도값
+                const defaultLongitude = 126.88014275474; // 기본 경도값
+                setLatitude(defaultLatitude);
+                setLongitude(defaultLongitude);
+                setCenter({ lat: defaultLatitude, lng: defaultLongitude }); // 기본 위치로 지도 중심 설정
+                setLevel(3); // 확대 레벨 설정
+                fetchAddress(defaultLatitude, defaultLongitude); // 기본 위치의 주소 조회
             },
             { enableHighAccuracy: true }
         );
     };
+
 
 
     const fetchAddress = (lat, lng) => {
@@ -192,6 +210,7 @@ function MyMap() {
     const handleFetchData = async () => {
         setLoading(true);
         try {
+            // const response = await axios.post('http://54.82.4.76:5000/kakao', {
             const response = await axios.post('http://localhost:5000/kakao', {
                 currentLatitude: latitude,
                 currentLongitude: longitude,
@@ -219,6 +238,7 @@ function MyMap() {
     const handlBusData = async () => {
         setLoading(true);
         try {
+            // const response = await axios.post('http://54.82.4.76:5000/location', {
             const response = await axios.post('http://localhost:5000/location', {
                 currentLatitude: latitude,
                 currentLongitude: longitude,
@@ -393,6 +413,7 @@ function MyMap() {
     const handleFetchCityData = async () => {
         if (cityData.length === 0) {  // 데이터가 로드되지 않았다면 데이터 로드
             try {
+                // const response = await fetch('http://54.82.4.76:5000/city');
                 const response = await fetch('http://localhost:5000/city');
                 if (!response.ok) {
                     throw new Error('데이터를 불러올 수 없습니다.');
@@ -453,6 +474,7 @@ function MyMap() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // const response = await fetch('http://54.82.4.76:3000/recyclingcenters');
                 const response = await fetch('http://localhost:3001/recyclingcenters');
                 if (!response.ok) {
                     throw new Error('Network response was not ok: ' + response.statusText);
@@ -502,6 +524,7 @@ function MyMap() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // const response = await fetch('http://54.82.4.76:3000/napron');
                 const response = await fetch('http://localhost:3001/napron');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -561,6 +584,7 @@ function MyMap() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // const response = await fetch('http://54.82.4.76:3000/zero')
                 const response = await fetch('http://localhost:3001/zero')
                 if (!response.ok) {
                     throw new Error('에러남..;;')
@@ -602,8 +626,17 @@ function MyMap() {
     }, [selectZeroWaste, wasteAll]);
 
     return (
-        <>
-            <section className="sidebar" style={{marginTop: "-130px"}}>
+        <div className="My_Map_con">
+            <div className="map_nav"></div>
+            <section className="sidebar">
+                <header>
+                    <h2><NavLink to="/">ECO Recycle Hub</NavLink></h2>
+                    <div className="head-weather">
+                        <div className="myLocation">
+                            <Weather/>
+                        </div>
+                    </div>
+                </header>
                 {reshop &&
                     <RecyclingCenters closeReshop={() => setReashop(false)} setReashop={setReashop} reshop={reshop}
                                       markerData={selectedMarker}/>}
@@ -612,19 +645,7 @@ function MyMap() {
                                  selectZeroshop={selectZeroshop}/>}
                 {napronOpen && <NapronCenters closeNapron={() => setNapronOpen(false)} setNapronOpen={setNapronOpen}
                                               napronOpen={napronOpen} selectNapron={selectNapron}/>}
-                <header>
-                    <nav>
-                        <button className="hamburger-btn">
-                            <FiAlignJustify/>
-                        </button>
-                        <h2><NavLink to="/">ECO Recycle Hub</NavLink></h2>
-                    </nav>
-                    <div className="head-weather">
-                        <div className="myLocation">
-                            <Weather/>
-                        </div>
-                    </div>
-                </header>
+
                 <div className="main-contents">
                     <div className="small_nav">
                         <button className="nav_button" onClick={() => toggleView('sidos')}>페트병수거함</button>
@@ -632,18 +653,20 @@ function MyMap() {
                         <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
                     </div>
                     <div className="search-location">
-                        <div className="search-location1">{userAddress}</div>
-                        <div className="search-location1">{address}</div>
-
+                        <div className="address-row">
+                            <div className="label">출발지</div>
+                            <div className="search-location1">{userAddress}</div>
+                        </div>
+                        <div className="address-row">
+                            <div className="label">도착지</div>
+                            <div className="search-location1">{address}</div>
+                        </div>
                     </div>
 
                     <div className="search-cate">
-                        <ul>
-                            <li><FaBusAlt onClick={handlBusData}/></li>
-                            <li><FaCar onClick={handleFetchData}/></li>
-                            {/*<li><FaTrainSubway onClick={handlBusData}/></li>*/}
-                            <li><FaPersonWalking/></li>
-                        </ul>
+                        <button><FaBusAlt onClick={handlBusData}/></button>
+                        <button><FaCar onClick={handleFetchData}/></button>
+                        <button><FaPersonWalking/></button>
                         <button className="search-btn" onClick={handlBusData}>길찾기</button>
                     </div>
                     <div className="result-trans">
@@ -699,7 +722,7 @@ function MyMap() {
                     {showMap && cityData.map((area, index) => (
                         <Polygon
                             key={index}
-                            path={area.geometry.coordinates[0].map(coord => ({ lat: coord[1], lng: coord[0] }))}
+                            path={area.geometry.coordinates[0].map(coord => ({lat: coord[1], lng: coord[0]}))}
                             strokeWeight={3}
                             strokeColor="#004c80"
                             strokeOpacity={0.8}
@@ -751,7 +774,7 @@ function MyMap() {
                     {/*내위치마커*/}
                     {latitude && longitude && (
                         <MapMarker
-                            position={{ lat: latitude, lng: longitude }}
+                            position={{lat: latitude, lng: longitude}}
                             image={{
                                 src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
                                 size: {
@@ -847,18 +870,16 @@ function MyMap() {
                     })}
 
                 </Map>
-                <div className="map-btn">
-                    <ul>
+                <div className="Mymap-btn">
                         <button onClick={toggleTraffic}>교통정보</button>
                         <button onClick={toggleRoadView}>로드뷰</button>
                         <button onClick={toggleUseDistrict}>지적편집도</button>
                         <button onClick={handleFetchCityData}>서울지도</button>
                         {/*<button onClick={handlBusData}>버스길찾기</button>*/}
                         <button onClick={moveToCurrentLocation}>내 위치</button>
-                    </ul>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

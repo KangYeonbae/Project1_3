@@ -1,285 +1,309 @@
-/* base style */
-* {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  text-decoration: none;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 body {
+  overflow-x: hidden;
+  position: relative;
   font-family: "Noto Sans KR", sans-serif;
-  font-style: normal;
 }
-
-.App {
-  width: 100%;
-  /*display: flex;*/
-  /*flex-direction: row; !* 넓은 화면에서는 사이드바와 지도가 나란히 배치됨 *!*/
-  height: 90vh;
-}
-
-.Info_main{
-  width: 100%;
-}
-.Info{
-  background: #f4f4f4; /* 연한 회색 배경 */
-  padding: 40px; /* 콘텐츠 주변의 패딩 */
-  border-radius: 8px; /* 둥근 모서리 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 상자 그림자 */
-  font-family: 'Open Sans', sans-serif; /* 폰트 스타일 */
-  width: 800px;
-  margin: 50px 250px;
-  float: left;
-  height: 700px;
-}
-.chart-container3 {
-  width: 30%;
-  height: 350px;
-  float: left;
-  margin: 50px 50px;
-}
-.header-Top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 50px;
-  z-index: 999;
-  padding: 10px 20px;
-  box-sizing: border-box;
-  background: #fff; /* 예시 배경색 */
-  margin: 0 auto;
-  position: relative;
-  border-bottom: 1px solid #ccc;
-}
-/* number+address */
-.tNumb-address {
-  display: flex;
-  align-items: center;
-  color: #555;
-}
-.site-numb { padding-right: 15px; }
-.address { font-weight: 500; }
-
-/* login-btn */
-.user-btn {
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
-
-/* site icons */
-.site-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 99;
-}
-.site-icon svg {
-  color: #fff;
-  font-size: 50px;
-}
-
-
-.top-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(45deg, #3496fe, #178844 50%);
-  color: white;
-  padding: 10px 20px;
-  /*position: fixed;*/
-  /*top: 50px; !* 헤더 아래에 위치하도록 조정 *!*/
-  width: 100%;
-  height: 70px;
-  z-index: 998; /* 헤더 위에 오도록 z-index 값 조정 */
-  box-sizing: border-box; /* 패딩을 포함한 너비가 100%가 되도록 설정 */
-  margin: 0 auto;
-  position: relative;
-}
-
-.top-nav a, .sidebar a, .nav-info a {
-  color: white;
-  text-decoration: none;
-}
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  margin-left: 20px; /* 링크 사이의 간격 */
-}
-
-.nav-info span {
-  margin-right: 20px; /* 정보 사이의 간격 */
-}
-
-.sidebar {
-  width: 400px; /* 기본 사이드바 너비 설정 */
-  height: calc(100vh - 160px); /* 화면의 전체 높이 */
-  background: #fff;
-  position: absolute;
-  top: 140px;
-  left: 20px;
-  z-index: 99;
-  border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-}
-
-.main-con {
-  position: relative;
-  margin: 0 auto;
-}
-
-.Map {
-  width: 100%; /* 사이드바의 너비를 고려한 지도의 너비 */
-  height: calc(100vh - 120px); /* 전체 높이 */
-}
-
-.Navbar{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1030;
-}
-.sidebar header {
-  padding: 20px;
-  background: #178844;
-}
-.sidebar nav {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #16a085;
-}
-.sidebar button, a {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-
-}
-.sidebar svg {
-  display: flex;
-  font-size: 1.8em;
-}
-
-.text_box{
-  margin: 0 50px;
-}
-.big_content1{
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-}
-.main-contents {
-  padding: 16px;
-  border-bottom: 1px solid #ccc;
-}
-
-.small_nav{
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 16px;
-}
-.small_nav .nav_button{
-  display: flex;
-  color: #fff;
-  padding: 10px 23.5px;
-  border-radius: 5px;
-  cursor: pointer;
-  background: #3496fe;
-}
-
-.small_nav .nav_button:hover{
-  /*background: whitesmoke;*/
-  /*margin: 20px 5px;*/
-  /*padding: 10px;*/
-  /*border-radius: 10px;*/
-  /*color: #16a085;*/
-  /*font-weight: bold;*/
-  /*cursor: pointer;*/
-}
-.small_nav .nav_button:active {
-  background: #3496fe;
-  color: #fff;
-}
-.start-btn, .end-btn {
-  width: 16px;
-  height: 16px;
-  border: 1px solid red;
-  background: red;
-}
-.search-location input {
-  width: 100%;
-  border: none;
-  padding: 16px;
-}
-.search-cate {
-  padding-top: 16px;
+.center-style {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.search-cate ul {
-  padding: 0 16px;
-  display: flex;
-}
-.search-cate li { padding-right: 40px; }
-.search-cate svg {
-  color: #252525;
-  transition: all .2s ease;
-}
-.search-cate li svg:hover { fill: #3496fe; }
-.search-cate .search-btn {
-  background: #3496fe;
-  padding: 10px 16px;
-  border-radius: 5px;
-  margin-left: auto;
-
+.common-section {
+  width: 100vw;
+  background: linear-gradient(to bottom, #fff, #f8f9fa);
+  padding: 8em 0;
+  flex-wrap: wrap;
+  text-align: left;
+  flex-direction: row;
 }
 
-.sub {
-  width: 250px;
-  position: fixed;
-  right: 50px;
-  top: 120px;
+#main-con {
+  width: 85%;
+  flex-direction: column;
+  margin: 0 auto;
+  text-align: center;
+}
+
+
+/* nav style */
+Nav {
+  width: 100vw;
+  --bs-bg-opacity: 0 !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  transition: transform 0.4s ease, background-color 0.3s ease;
+  transform: translateY(0);
+  background-color: transparent;
   z-index: 99;
-  background: #fff;
-  padding: 20px;
 }
+Nav.scrolled { background-color: #212529 !important; }
+Nav a { color: #fff !important; }
+.dropdown-menu > a { color: black !important; }
+
+/* intro style */
+.our-intro {
+  position: absolute;
+  top: 45%;
+  left: 20%;
+  color: #fff;
+  text-align: left;
+}
+.our-intro h1 {
+  font-size: 3.5em;
+  animation-delay: 2s;
+  animation: fade-in 2s forwards;
+}
+.our-intro h2, h3 {
+  animation-delay: 1s;
+  animation: fade-in 3s forwards;
+}
+.our-intro p {
+  padding: 0;
+  margin: 0;
+  animation: intro-p 2s forwards;
+  animation-delay: .5s;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes intro-p {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* circle image style */
+.box {
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+}
+.back-img {
+  position: relative;
+  width: 100%;
+  height: 810px;
+  background: url("assets/img/ocg-saving-the-ocean-unsplash.jpg") no-repeat center 20%;
+  background-size: cover;
+  mask-image:
+          linear-gradient(to top, transparent, black 20%),
+          linear-gradient(to left, transparent, black 30%),
+          linear-gradient(to right, transparent, black 30%);
+  mask-composite: intersect;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  animation: left-in 1.5s forwards;
+}
+@keyframes left-in {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0.8;
+  }
+}
+
+/* wave style */
+.wave-con, .wave { position: absolute; }
+.wave-con {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: -99;
+}
+.wave {
+  top: 80%;
+  left: 75%;
+  width: 170vw;
+  height: 170vw;
+  margin-left: -110vw;
+  margin-top: -165vw;
+  border-radius: 48%;
+  z-index: -1;
+}
+.wave.-one {
+  animation: waveAnimation 18000ms infinite linear;
+  background: linear-gradient(45deg, #3496fe, #178844 50%);
+}
+.wave.-two {
+  animation: waveAnimation 13500ms infinite linear;
+  opacity: 0.1;
+  background: #000;
+}
+.wave.-three {
+  animation: waveAnimation 11000ms infinite linear;
+  opacity: 0.2;
+  background: #ddd;
+}
+@keyframes waveAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#introduce-sec {
+  width: 80%;
+  padding: 5em 0 3em 0;
+  text-align: left;
+}
+.erehub-intro h1 {
+  font-size: 3em;
+  font-weight: 500;
+  line-height: 1.2em;
+}
+.erehub-intro { padding-top: 2em; }
+
+.erehub-img p { line-height: 1.8em; }
+.erehub-img { position: relative; }
+
+#introduce-sec h2 {
+  display: flex;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.5em 0;
+}
+.erehub-service {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: flex-end;
+  padding-top: 1em;
+}
+.our-service {
+  width: 100%;
+  padding: 0;
+  display: flex;
+  margin-top: 30px;
+  border-radius: 20px;
+}
+.our-service li {
+  width: 100%;
+  position: relative;
+  transition: .3s linear;
+  margin-left: 20px;
+}
+.erehub-btn {
+  position: absolute;
+  top: 10%;
+  right: 5%;
+  background: #178844;
+  font-size: 18px;
+  padding: 16px 42px;
+  letter-spacing: 3px;
+  color: #fff;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: .3s linear;
+  font-weight: bold;
+}
+.erehub-btn:hover {
+  background: #fff;
+  color: #178844;
+  border: 2px solid #178844;
+}
+
+.our-service li:first-child { margin-left: 0; }
+#introduce-sec .service-list {
+  height: 250px;
+  margin: 0 10px;
+  text-align: center;
+}
+.service-list svg {
+  font-size: 5em;
+  opacity: 70%;
+  color: #178844;
+}
+.service-list .service-list-info { margin-top: 10px; }
+.service-list-info h4 {
+  color: #444;
+  font-weight: bold;
+}
+#intro-section {
+  width: 100vw;
+  height: 100%;
+  padding-top: 10em;
+  background: #f8f9fa;
+  position: relative;
+}
+#intro-section > h2 {
+  font-size: 3.5em;
+  font-weight: bold;
+  width: 18%;
+  text-align: left;
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  /*z-index: 99;*/
+}
+/* 자원순환 수치 영역 */
+#erehub-mark {
+  width: 100vw;
+  padding: 5em 0;
+  background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .3)), url("./assets/img/noah-buscher-x8ZStukS2PM-unsplash.jpg") fixed center 20%;
+  background-size: cover;
+  /*backdrop-filter: blur(30px);*/
+  color: #fff;
+}
+.mark-info {
+  width: 70%;
+  margin: 0 auto;
+  text-align: left;
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid #f8f9fa;
+  padding-bottom: 2em;
+}
+.mark-info h1 {
+  padding-right: 1.5em;
+}
+.recycle-score {
+  width: 70%;
+  margin: 0 auto;
+  text-align: left;
+  padding-top: 3em;
+  display: flex;
+  justify-content: space-between;
+}
+.recycle-score h1 {
+  font-size: 6em;
+  font-weight: bold;
+  color: #f8f9fa;
+}
+
+/* foot style */
+
+
+/*-----------------------------------------------------------------------*/
 
 /* login btn & hover */
-.login-btn{
+.login-btn {
   color: #555;
   padding: 10px;
   border-radius: 10px;
   transition: all 0.3s ease;
 }
-.login-btn:hover {
-  color: #fff;
-  background: #3496fe;
-  border-radius: 10px;
-}
 
-.myPage, .nav-link{
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #A2E1D4;
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  position: relative;
-}
 /* 드롭다운 버튼 */
 .dropdown-btn {
   cursor: pointer;
   border: none;
   border-radius: 10px;
-  background-color: #A2E1D4;
-  color: white;
   font-weight: bold;
   text-decoration: none;
   position: relative;
@@ -290,16 +314,17 @@ body {
 .dropdown-content {
   display: none; /* 기본적으로 숨김 처리 */
   position: absolute;
-  right: 0; /* 오른쪽 정렬 */
   width: 100px;
-  margin: 20px 20px 20px 0;
   z-index: 1;
+  border-radius: 10px;
 }
 
-/* 드롭다운 버튼 호버 시 드롭다운 내용 보여주기 */
-.login-btn:hover .dropdown-content {
+/* 드롭다운 버튼과 내용 호버 시 드롭다운 내용 보여주기 */
+.dropdown-btn:hover + .dropdown-content,
+.dropdown-content:hover {
   display: block; /* 마우스 오버시 표시 */
 }
+
 
 .Chatbot {
   width: 80px;
@@ -330,59 +355,15 @@ body {
   font-size: 55px;
 }
 
-/* marker fixing */
-.senter-marker {
-  /*width: 500px;*/
-  position: fixed;
-  left: 51%;
-  bottom: 0;
-  transform: translate(-50%, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: #fff;
-  padding: 10px;
-  border-radius: 10px 10px 0 0;
-  transition: all .3s ease-in-out;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-}
-.senter-marker button {
-  margin: 10px;
-  font-size: 1em;
-  cursor: pointer;
-  line-height: 24px;
-  color: #5a5a5a;
-}
-.senter-marker:hover { padding-bottom: 20px; }
-.senter-marker button:hover{
-  color: #178844;
-  cursor: pointer;
-}
-
 .munji_map{
   float: left;
-  margin: 30px 50px;
+  margin: 30px 40px;
   width: 60%;
 }
 .calendar_big{
   float: left;
   width: 35%;
   height: 80%;
-}
-
-.Info h1, .Info h2, .Info p {
-  margin-bottom: 20px; /* 요소간 간격 */
-}
-
-.Info h1 {
-  color: #333; /* 제목 색상 */
-  font-size: 2.5em; /* 제목 크기 */
-}
-
-.Info p {
-  color: #666; /* 본문 텍스트 색상 */
-  line-height: 1.6; /* 줄간격 */
 }
 
 .pagination{

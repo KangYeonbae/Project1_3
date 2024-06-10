@@ -1,0 +1,29 @@
+.info_nav{
+    height: 60px;
+    background-color: #178844;
+}
+.Info_main{
+    margin-top: 3%;
+    margin-left: 5%;
+}
+.Info_content{
+    width: 40%;
+    background-color: #5b9bd5;
+    border-radius: 20px;
+    border: #4d4d51 solid 1px;
+}
+
+.Info_content h1, .Info_content h2, .Info_content p {
+    margin-bottom: 20px; /* 요소간 간격 */
+}
+
+.Info_content h1 {
+    color: #333; /* 제목 색상 */
+    font-size: 2.5em; /* 제목 크기 */
+}
+
+.Info_content p {
+    color: #666; /* 본문 텍스트 색상 */
+    line-height: 1.6; /* 줄간격 */
+}
+

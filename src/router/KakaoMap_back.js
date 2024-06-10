@@ -6,16 +6,93 @@ import {
     ZoomControl,
     Polygon,
     MapInfoWindow,
-    Polyline
+    Polyline,
+    useMap
 } from "react-kakao-maps-sdk";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import proj4 from 'proj4';
 import "bootstrap/js/dist/collapse";
 import "../css/KakaoMap.css";
 import axios from "axios";
+import RecyclingCenters from "./bar_Reyc";
+import ZeroCenters from "./bar_zero";
+import NapronCenters from "./bar_Napron";
+import {FiAlignJustify} from "react-icons/fi";
+import {NavLink} from "react-router-dom";
+import Weather from "./weather";
+import {FaBusAlt, FaCar} from "react-icons/fa";
+import {FaPersonWalking, FaTrainSubway} from "react-icons/fa6";
+import {add} from "proj4/lib/projections";
 
 
-function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerClick, onZeroClick, setOpenZero, onNapronClick,  setNapronOpen, setCarRoutes, carRoutes, setFullRoutesDetails }) {
+function MyMap() {
+    let [reshop, setReashop] = useState(false);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+    const handleMarkerClick = (markerData) => {
+        setSelectedMarker(markerData);
+    };
+
+    let [openZero, setOpenZero] = useState(false);
+    const [selectZeroshop, setSelectZeroshop] = useState(null);
+
+    const toggleView = (view) => {
+        setCurrentView(currentView === view ? null : view);
+    };
+
+    const [currentView, setCurrentView] = useState(null);
+    const handleSelectZeroShop = (selectZeroshop) => {
+        setSelectZeroshop(selectZeroshop);
+    };
+
+    let [napronOpen, setNapronOpen] = useState(false);
+    const [selectNapron, setSelectNapron] = useState(null);
+
+    const handleSelectNapron = (napron) => {
+        setSelectNapron(napron)
+    }
+
+    const [selectedSido, setSelectedSido] = useState(null);
+    const [sidos, setSidos] = useState([
+        '강원도', '경기도', '경상도', '광주', '대구',
+        '대전', '부산', '서울', '인천', '울산',
+        '전라도', '제주', '충청도'
+    ]);
+
+    const handleSidoSelection = (sido) => {
+        // 현재 선택된 지역이 다시 클릭되면 선택 해제
+        if (selectedSido === sido) {
+            setSelectedSido(null);
+        } else {
+            setSelectedSido(sido);
+        }
+    };
+
+
+    const [selectZeroWaste, setSelectZeroWaste] = useState(null);
+    const [zeroWastes, setzeroWastes] = useState(['제로마켓', '서울', '경기', '인천', '강원도', '충청도', '경상도', '전라도', '제주도']);
+
+    const handleZeroWasteSelection = (zeroWaste) => {
+        // 현재 선택된 카테고리가 다시 클릭되면 선택 해제
+        if (selectZeroWaste === zeroWaste) {
+            setSelectZeroWaste(null);
+        } else {
+            setSelectZeroWaste(zeroWaste);
+        }
+    };
+
+
+    const [selectMark, setSelectZeroMark] = useState(null);
+    const [zeroMarks, setzeroMarks] = useState(['서울', '경기', '인천', '강원도', '충청도', '경상도', '전라도', '제주']);
+
+    const handleMarkSecletion = (zeroMark) => {
+        if (selectMark === zeroMark) {
+            setSelectZeroMark(null);
+        } else {
+            setSelectZeroMark(zeroMark);
+        }
+    }
+
+
     /* global kakao */
     const [traffic, setTraffic] = useState(false);
     const [mapTypeId, setMapTypeId] = useState();
@@ -24,7 +101,8 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
 
     const [map, setMap] = useState();
 
-    const [center, setCenter] = useState({ lat: 37.558185572111356, lng: 127.00091673775184 });
+    const [center, setCenter] = useState({lat: 37.558185572111356, lng: 127.00091673775184});
+
     const [level, setLevel] = useState(9);
 
 
@@ -32,42 +110,83 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         setMap(map);
     };
 
-    const [currentPosition, setCurrentPosition] = useState(null);  // 사용자의 현재 위치를 저장할 상태
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [error, setError] = useState(null);
 
 
-// 사용자 위치로 이동하는 함수
+    // 내위치로 이동
     const moveToCurrentLocation = () => {
         if (!navigator.geolocation) {
             alert("Geolocation is not supported by this browser.");
             return;
         }
-
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
                 const newCenter = { lat: latitude, lng: longitude };
-                setCenter(newCenter);
-                setCurrentPosition(newCenter);  // 현재 위치를 상태에 저장
-                setLevel(3);  // 줌 레벨 조정
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
+
+                setLatitude(latitude);
+                setLongitude(longitude);
+                setCenter(newCenter); // 직접 center 상태를 업데이트
+                setLevel(3); // 확대 레벨 설정
+                fetchAddress(latitude, longitude); // 주소 조회
+
                 setError(null);
             },
             (error) => {
                 console.error("Error fetching current location:", error);
+                setError("현재 위치를 가져올 수 없습니다.");
                 alert("현재 위치를 가져올 수 없습니다.");
             },
             { enableHighAccuracy: true }
         );
     };
 
+
+    const fetchAddress = (lat, lng) => {
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2Address(lng, lat, function (results, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                const addressName = results[0].address.address_name;
+                setUserAddress(addressName);
+            }
+        });
+    };
+
+    // 내위치 마크이동핸들러
+    const handleMarkerDragEnd = (marker) => {
+        const position = marker.getPosition();
+        const newLatitude = position.getLat();
+        const newLongitude = position.getLng();
+
+        setLatitude(newLatitude);
+        setLongitude(newLongitude);
+
+        setCenter({ lat: newLatitude, lng: newLongitude });
+
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2Address(newLongitude, newLatitude, function (results, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                const addressName = results[0].address.address_name;
+                setUserAddress(addressName);
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (map && center) {
+            map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+            map.setLevel(level);
+        }
+    }, [map, center, level]);
+
+
     const [loading, setLoading] = useState(false);
     const [clickedLat, setClickedLat] = useState(null);
     const [clickedLng, setClickedLng] = useState(null);
-
+    const [userAddress, setUserAddress] = useState("");  // 주소 상태
+    const [address, setAddress] = useState("");  // 주소 상태
 
     // handleFetchData 함수 수정
     const handleFetchData = async () => {
@@ -133,7 +252,18 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         }
         setLoading(false);
     };
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 9; // 한 페이지당 9개의 항목을 표시
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = sidos.slice(startIndex, endIndex);
 
+
+    const [visibleRouteIndex, setVisibleRouteIndex] = useState(null); // 보이는 경로 인덱스
+
+    const toggleRouteVisibility = (index) => {
+        setVisibleRouteIndex(visibleRouteIndex === index ? null : index); // 토글 로직
+    };
     const renderBusRoutes = () => {
         return busRoutes.map((route, index) => {
             console.log("Route Data:", route);  // 각 노선 데이터 로깅
@@ -142,6 +272,10 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
             if (!Array.isArray(pathList) || pathList.length === 0) {
                 console.error('No pathList available for route:', route);
                 return null;
+            }
+
+            if (visibleRouteIndex !== index) {
+                return null; // 현재 선택된 경로만 보이도록 함
             }
 
             return (
@@ -160,6 +294,7 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         });
     };
 
+
     // 클릭한위치 마커생성
     const [markerPosition, setMarkerPosition] = useState(null);
     const handleMapClick = (_, mouseEvent) => {
@@ -173,16 +308,86 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         const Maplng = Maplatlng.getLng().toFixed(7);
         setClickedLat(Maplat); // 클릭한 위도 저장
         setClickedLng(Maplng); // 클릭한 경도 저장
-        setMarkerPosition({ lat: parseFloat(Maplat), lng: parseFloat(Maplng) });
+        setMarkerPosition({lat: parseFloat(Maplat), lng: parseFloat(Maplng)});
+    };
+
+    // 클릭한 마커위치 주소로바꾸기
+    useEffect(() => {
+        // Geocoder 객체생성
+        const geocoder = new kakao.maps.services.Geocoder();
+        const lookupAddress = () => {
+            if (clickedLat && clickedLng) {
+                // 좌표를 주소로 변환
+                geocoder.coord2Address(clickedLng, clickedLat, function (results, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        setAddress(results[0].address.address_name);
+                    } else {
+                        setAddress("주소를 찾을 수 없습니다.")
+                    }
+                });
+            }
+        };
+
+        lookupAddress();
+    }, [clickedLat, clickedLng]);
+
+
+
+    // 자동차 길찾기
+    const [carRoutes, setCarRoutes] = useState([]);
+
+    const renderRouteDetails = () => {
+        return carRoutes.map((route, index) => (
+            <div key={index}>
+                <h3>길찾기 결과 #{index + 1}</h3>
+                <p>출발지: {route.summary.origin.name}</p>
+                <p>도착지: {route.summary.destination.name}</p>
+                <p>예상 시간: {Math.floor(route.summary.duration / 60)}분</p>
+                <p>예상 거리: {route.summary.distance}m</p>
+                <h4>경로 상세 정보</h4>
+                {route.sections.map((section, idx) => (
+                    <div key={idx}>
+                        <p>{section.distance}m, {Math.floor(section.duration / 60)}분 소요</p>
+                        <p>도로명: {section.roads.map(road => road.name).join(', ')}</p>
+                    </div>
+                ))}
+            </div>
+        ));
     };
 
 
-    useEffect(() => {
-        if (map) {
-            map.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
-            map.setLevel(level);
-        }
-    }, [map, center, level]);
+    // 버스길찾기 정보창
+    const [fullRoutesDetails, setFullRoutesDetails] = useState([]);
+    const renderFullRouteDetails = () => {
+        return (
+            <div>
+                {fullRoutesDetails.map((detail, index) => {
+                    const pathList = detail.pathList || [];
+                    const time = detail.time || "Not available";
+                    const distance = detail.distance || "Not available";
+
+                    return (
+                        <div className="search-result" key={index}>
+                            <h3 className="result-time">{time}분</h3>
+                            <p className="result-distance">{distance}m</p>
+                            {pathList.map((path, idx) => (
+                                <div className="result" key={idx}>
+                                    <p className="result-transport">{path.routeNm || "Not available"}</p>
+                                    <p>{path.fname || "Not available"} 승차</p>
+                                    <p>{path.tname || "Not available"} 하차</p>
+                                </div>
+                            ))}
+                            <button onClick={() => toggleRouteVisibility(index)}>
+                                {visibleRouteIndex === index ? "경로 숨기기" : "경로 보기"}
+                            </button>
+                            {visibleRouteIndex === index && renderBusRoutes()}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
 
 
     // 교통정보 토글 함수
@@ -191,17 +396,15 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         setMapTypeId(traffic ? null : "TRAFFIC");
     };
 
-// 로드뷰 토글 함수
+    // 로드뷰 토글 함수
     const toggleRoadView = () => {
         setMapTypeId(mapTypeId === "ROADVIEW" ? null : "ROADVIEW");
     };
 
-// 지적편집도 토글 함수
+    // 지적편집도 토글 함수
     const toggleUseDistrict = () => {
         setMapTypeId(mapTypeId === "USE_DISTRICT" ? null : "USE_DISTRICT");
     };
-
-
 
     useEffect(() => {
         const fetchCityData = async () => {
@@ -250,9 +453,9 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
     const [hoverArea, setHoverArea] = useState(null);
 
     const handleClick = (area) => {
-        if(selectedArea && selectedArea.properties.시군구명 === area.properties.시군구명){
+        if (selectedArea && selectedArea.properties.시군구명 === area.properties.시군구명) {
             setSelectedArea(null);
-        }else{
+        } else {
             setSelectedArea(area);
         }
 
@@ -291,7 +494,6 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
     };
 
 
-
     useEffect(() => {
         if (selectMark && allMarkers.length > 0) {
             const matchingRule = MarkRules[selectMark];
@@ -307,7 +509,6 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
         }
 
     }, [selectMark, allMarkers]);
-
 
 
     const [allData, setAllData] = useState([]); // 전체 데이터
@@ -349,14 +550,13 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
     };
 
 
-
 // 시도 선택 핸들러
     useEffect(() => {
         console.log(selectedSido)
         if (selectedSido && allData.length > 0) {
             const matchsidoData = sidosRules[selectedSido];
             console.log(matchsidoData)
-            if(matchsidoData) {
+            if (matchsidoData) {
                 const filterWaste = allData.filter(item => {
                     const result = matchsidoData(item.SIDO);
                     return result;
@@ -373,7 +573,7 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
     const [wasteAll, setwasteAll] = useState([]);
     const [wasteMarker, setWasteMarker] = useState([]);
 
-    useEffect (() => {
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('http://localhost:3001/zero')
@@ -417,171 +617,264 @@ function MyMap({selectedSido, selectZeroWaste, selectMark, setReashop, onMarkerC
     }, [selectZeroWaste, wasteAll]);
 
     return (
-        <div
-            className="map-con"
-        >
-            <Map
-                center={center}
-                level={level}
-                onCreate={handleMapCreate}
-                className="Map" // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
-                onClick={handleMapClick}
+        <>
+            <section className="sidebar" style={{marginTop: "-130px"}}>
+                {reshop &&
+                    <RecyclingCenters closeReshop={() => setReashop(false)} setReashop={setReashop} reshop={reshop}
+                                      markerData={selectedMarker}/>}
+                {openZero &&
+                    <ZeroCenters closeZeroshop={() => setOpenZero(false)} setOpenZero={setOpenZero} openZero={openZero}
+                                 selectZeroshop={selectZeroshop}/>}
+                {napronOpen && <NapronCenters closeNapron={() => setNapronOpen(false)} setNapronOpen={setNapronOpen}
+                                              napronOpen={napronOpen} selectNapron={selectNapron}/>}
+                <header>
+                    <nav>
+                        <button className="hamburger-btn">
+                            <FiAlignJustify/>
+                        </button>
+                        <h2><NavLink to="/">ECO Recycle Hub</NavLink></h2>
+                    </nav>
+                    <div className="head-weather">
+                        <div className="myLocation">
+                            <Weather/>
+                        </div>
+                    </div>
+                </header>
+                <div className="main-contents">
+                    <div className="small_nav">
+                        <button className="nav_button" onClick={() => toggleView('sidos')}>페트병수거함</button>
+                        <button className="nav_button" onClick={() => toggleView('zeroWastes')}>제로웨이스트</button>
+                        <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
+                    </div>
+                    <div className="search-location">
+                        {/*<p>현재 당신의 위치: {latitude}, {longitude}</p>*/}
+                        <p>{userAddress}</p>
+                        <p>{address}</p>
+                    </div>
+
+                    <div className="search-cate">
+                        <ul>
+                            <li><FaBusAlt onClick={handlBusData}/></li>
+                            <li><FaCar onClick={handleFetchData}/></li>
+                            {/*<li><FaTrainSubway onClick={handlBusData}/></li>*/}
+                            <li><FaPersonWalking/></li>
+                        </ul>
+                        <button className="search-btn" onClick={handlBusData}>길찾기</button>
+                    </div>
+                    <div className="result-trans">
+                        {renderRouteDetails()}
+                        {renderFullRouteDetails()}
+                    </div>
+
+                    {currentView === 'sidos' && (
+                        <div>
+                            <div className="senter-marker">
+                                {currentItems.map((sido) => (
+                                    <button key={sido} onClick={() => handleSidoSelection(sido)}>
+                                        {sido}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {currentView === 'zeroWastes' && (
+                        <div className="senter-marker">
+                            {zeroWastes.map((zeroWaste, index) => (
+                                <button key={zeroWaste} onClick={() => handleZeroWasteSelection(zeroWaste)}>
+                                    {zeroWaste}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    {currentView === 'zeroMarks' && (
+                        <div className="senter-marker">
+                            {zeroMarks.map((zeroMark, index) => (
+                                <button key={zeroMark} onClick={() => handleMarkSecletion(zeroMark)}>
+                                    {zeroMark}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+            <div
+                className="map-con"
             >
-                <MapTypeControl position={"TOPRIGHT"}/>
-                <ZoomControl position={"RIGHT"}/>
+                <Map
+                    center={center}
+                    level={level}
+                    onCreate={handleMapCreate}
+                    className="Map" // 지도 객체가 생성되면 setMap을 통해 상태 업데이트
+                    onClick={handleMapClick}
+                    {visibleRouteIndex !== null && renderBusRoutes()}
+                >
+                    <MapTypeControl position={"TOPRIGHT"}/>
+                    <ZoomControl position={"RIGHT"}/>
 
-                {/*서울지도표시*/}
-                {/*{cityData.map((area, index) => (*/}
-                {/*    <Polygon*/}
-                {/*        key={index}*/}
-                {/*        path={area.geometry.coordinates[0].map(coord => ({ lat: coord[1], lng: coord[0] }))}*/}
-                {/*        strokeWeight={3}*/}
-                {/*        strokeColor="#004c80"*/}
-                {/*        strokeOpacity={0.8}*/}
-                {/*        fillColor={*/}
-                {/*            selectedArea === area ? "rgba(0, 0, 0, 0)" :*/}
-                {/*                hoverArea === area ? "#09f" :*/}
-                {/*                    "#fff"*/}
-                {/*        } // 조건부 색상 변경*/}
-                {/*        fillOpacity={0.7}*/}
-                {/*        onMouseover={() => setHoverArea(area)}*/}
-                {/*        onMouseout={() => setHoverArea(null)}*/}
-                {/*        onClick={() => handleClick(area)}*/}
-                {/*    />*/}
-                {/*))}*/}
-                {carRoutes.map((route, index) => {
-                    const path = route.sections.flatMap(section =>
-                        section.roads.flatMap(road =>
-                            road.vertexes.length >= 2 ? road.vertexes.reduce((acc, val, idx, arr) => {
-                                if (idx % 2 === 0 && arr[idx + 1] !== undefined) {
-                                    acc.push({ lat: arr[idx + 1], lng: val });
-                                }
-                                return acc;
-                            }, []) : []
-                        )
-                    );
+                    {/*서울지도표시*/}
+                    {/*{cityData.map((area, index) => (*/}
+                    {/*    <Polygon*/}
+                    {/*        key={index}*/}
+                    {/*        path={area.geometry.coordinates[0].map(coord => ({ lat: coord[1], lng: coord[0] }))}*/}
+                    {/*        strokeWeight={3}*/}
+                    {/*        strokeColor="#004c80"*/}
+                    {/*        strokeOpacity={0.8}*/}
+                    {/*        fillColor={*/}
+                    {/*            selectedArea === area ? "rgba(0, 0, 0, 0)" :*/}
+                    {/*                hoverArea === area ? "#09f" :*/}
+                    {/*                    "#fff"*/}
+                    {/*        } // 조건부 색상 변경*/}
+                    {/*        fillOpacity={0.7}*/}
+                    {/*        onMouseover={() => setHoverArea(area)}*/}
+                    {/*        onMouseout={() => setHoverArea(null)}*/}
+                    {/*        onClick={() => handleClick(area)}*/}
+                    {/*    />*/}
+                    {/*))}*/}
+                    {carRoutes.map((route, index) => {
+                        const path = route.sections.flatMap(section =>
+                            section.roads.flatMap(road =>
+                                road.vertexes.length >= 2 ? road.vertexes.reduce((acc, val, idx, arr) => {
+                                    if (idx % 2 === 0 && arr[idx + 1] !== undefined) {
+                                        acc.push({lat: arr[idx + 1], lng: val});
+                                    }
+                                    return acc;
+                                }, []) : []
+                            )
+                        );
 
-                    return (
-                        <Polyline
-                            key={index}
-                            path={path}
-                            strokeWeight={5}
-                            strokeColor={'red'} // 수정: 각 경로의 교통 정보에 따라 색상 결정
-                            strokeOpacity={0.7}
-                            strokeStyle={'solid'}
-                        />
-                    );
-                })}
-                {renderBusRoutes()}
-                {/*클릭한위치 마커생성*/}
-                {markerPosition && (
-                    <MapMarker
-                        position={markerPosition}
-                        clickable={true} // 마커 클릭 가능 설정
-                    >
-                        <div>여기가 클릭한 위치입니다!</div>
-                    </MapMarker>
-
-                )}
-                {/*내위치마커*/}
-                {currentPosition && (
-                    <MapMarker
-                        position={currentPosition}
-                        image={{
-                            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-                            size: {
-                                width: 24,
-                                height: 35
-                            }
-                        }}
-                        draggable={true}
-                    />
-                )}
-
-                {/*로드뷰, 지형뷰등*/}
-                {mapTypeId && <MapTypeId type={mapTypeId}/>}
-
-                {/*재활용센터 마커*/}
-                {RMarkers.map((item, index) => {
-                    const lat = parseFloat(item.LATITUDE);
-                    const lng = parseFloat(item.LONGITUDE);
-
-                    return (
+                        return (
+                            <Polyline
+                                key={index}
+                                path={path}
+                                strokeWeight={5}
+                                strokeColor={'red'} // 수정: 각 경로의 교통 정보에 따라 색상 결정
+                                strokeOpacity={0.7}
+                                strokeStyle={'solid'}
+                            />
+                        );
+                    })}
+                    {renderBusRoutes()}
+                    {/*클릭한위치 마커생성*/}
+                    {markerPosition && (
                         <MapMarker
-                            key={index}
-                            image={{
-                                src: "./img/west1.png",
-                                size: {
-                                    width: 30,
-                                    height: 35,
-                                }
-                            }}
-                            position={{ lat, lng }}
-                            title={item.NAME}
-                            onClick={() =>{ onMarkerClick(item); setReashop(true)}}
-                        />
-                    );
-                })}
+                            position={markerPosition}
+                            clickable={true} // 마커 클릭 가능 설정
+                        >
+                            <div>여기가 클릭한 위치입니다!</div>
+                        </MapMarker>
 
-
-                {/*네프론 마커*/}
-                {displayData.map((item, index) => {
-                    const lat = parseFloat(item.LATITUDE);
-                    const lng = parseFloat(item.LONGITUDE);
-                    return(
-
+                    )}
+                    {/*내위치마커*/}
+                    {latitude && longitude && (
                         <MapMarker
-                            key={index}
+                            position={{ lat: latitude, lng: longitude }}
                             image={{
-                                src: ".\\img\\pet1.png",
+                                src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
                                 size: {
                                     width: 24,
-                                    height: 35,
+                                    height: 35
                                 }
                             }}
-                            position={{ lat, lng }}
-                            title={item.NAME}
-                            onClick={() =>{ setNapronOpen(true); onNapronClick(item)}}
-
+                            draggable={true}
+                            onDragEnd={(marker) => handleMarkerDragEnd(marker)}
                         />
-                    );
-                })}
+                    )}
 
 
-                {/*제로웨이스트 마커*/}
-                {wasteMarker.map((item, index) => {
-                    const lat = parseFloat(item.LATITUDE);
-                    const lng = parseFloat(item.LONGITUDE);
-                    return(
+                    {/*로드뷰, 지형뷰등*/}
+                    {mapTypeId && <MapTypeId type={mapTypeId}/>}
 
-                        <MapMarker
-                            key={index}
-                            image={{
-                                src: ".\\img\\zero3.png",
-                                size: {
-                                    width: 30,
-                                    height: 35,
-                                }
-                            }}
-                            position={{ lat, lng }}
-                            title={item.NAME}
-                            onClick={() =>{ onZeroClick(item); setOpenZero(true)}}
-                        />
-                    );
-                })}
+                    {/*재활용센터 마커*/}
+                    {RMarkers.map((item, index) => {
+                        const lat = parseFloat(item.LATITUDE);
+                        const lng = parseFloat(item.LONGITUDE);
 
-            </Map>
-            <div className="map-btn">
-                <ul>
-                    <button onClick={toggleTraffic}>교통정보</button>
-                    <button onClick={toggleRoadView}>로드뷰</button>
-                    <button onClick={toggleUseDistrict}>지적편집도</button>
-                    <button onClick={handleFetchData}>자동차길찾기</button>
-                    <button onClick={handlBusData}>버스길찾기</button>
-                    <button onClick={moveToCurrentLocation}>내 위치</button>
-                </ul>
+                        return (
+                            <MapMarker
+                                key={index}
+                                image={{
+                                    src: "./img/west1.png",
+                                    size: {
+                                        width: 30,
+                                        height: 35,
+                                    }
+                                }}
+                                position={{lat, lng}}
+                                title={item.NAME}
+                                onClick={() => {
+                                    handleMarkerClick(item);
+                                    setReashop(true)
+                                }}
+                            />
+                        );
+                    })}
+
+
+                    {/*네프론 마커*/}
+                    {displayData.map((item, index) => {
+                        const lat = parseFloat(item.LATITUDE);
+                        const lng = parseFloat(item.LONGITUDE);
+                        return (
+
+                            <MapMarker
+                                key={index}
+                                image={{
+                                    src: ".\\img\\pet1.png",
+                                    size: {
+                                        width: 24,
+                                        height: 35,
+                                    }
+                                }}
+                                position={{lat, lng}}
+                                title={item.NAME}
+                                onClick={() => {
+                                    setNapronOpen(true);
+                                    handleSelectNapron(item)
+                                }}
+
+                            />
+                        );
+                    })}
+
+
+                    {/*제로웨이스트 마커*/}
+                    {wasteMarker.map((item, index) => {
+                        const lat = parseFloat(item.LATITUDE);
+                        const lng = parseFloat(item.LONGITUDE);
+                        return (
+
+                            <MapMarker
+                                key={index}
+                                image={{
+                                    src: ".\\img\\zero3.png",
+                                    size: {
+                                        width: 30,
+                                        height: 35,
+                                    }
+                                }}
+                                position={{lat, lng}}
+                                title={item.NAME}
+                                onClick={() => {
+                                    handleSelectZeroShop(item);
+                                    setOpenZero(true)
+                                }}
+                            />
+                        );
+                    })}
+
+                </Map>
+                <div className="map-btn">
+                    <ul>
+                        <button onClick={toggleTraffic}>교통정보</button>
+                        <button onClick={toggleRoadView}>로드뷰</button>
+                        <button onClick={toggleUseDistrict}>지적편집도</button>
+                        {/*<button onClick={handleFetchData}>자동차길찾기</button>*/}
+                        {/*<button onClick={handlBusData}>버스길찾기</button>*/}
+                        <button onClick={moveToCurrentLocation}>내 위치</button>
+                    </ul>
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

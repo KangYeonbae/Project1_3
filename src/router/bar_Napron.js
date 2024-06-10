@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { IoClose } from "react-icons/io5";
-import '../css/sidebar.css'
+import '../css/sidebar_Napron.css'
 
 function NapronCenters(props) {
         console.log(props.selectNapron)
      return (
         <div className="sidebar2">
+            <div className = "sidebar2_border_Napron">
             <div className="Rec">
                 <button>
                     <IoClose style={{color: 'black'}} onClick={props.closeNapron}/>
@@ -25,7 +26,7 @@ function NapronCenters(props) {
                     <p>No marker data available</p>
                 )}
             </div>
-
+            </div>
         </div>
     );
 }

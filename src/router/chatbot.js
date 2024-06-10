@@ -28,6 +28,9 @@ function Chatbot(props) {
             const newMarkData = await fetchData('http://localhost:3001/recyclingcenters');
             const zeroData = await fetchData('http://localhost:3001/zero');
             const napronData = await fetchData('http://localhost:3001/napron');
+            // const newMarkData = await fetchData('http://http://54.82.4.76:3000/recyclingcenters');
+            // const zeroData = await fetchData('http://54.82.4.76:3000/zero');
+            // const napronData = await fetchData('http://54.82.4.76:3000/napron');
 
             // 상태에 저장 혹은 추가적인 로직 구현
             setResponses({ newMarkData, zeroData, napronData });
