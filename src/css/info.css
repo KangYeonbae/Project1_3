@@ -8,9 +8,11 @@
 }
 .Info_content{
     width: 40%;
-    background-color: #5b9bd5;
+    color : #fff;
+    background: linear-gradient(to top, #f0fff0, #3FBFAD);
     border-radius: 20px;
     border: #4d4d51 solid 1px;
+    padding: 20px;
 }
 
 .Info_content h1, .Info_content h2, .Info_content p {
@@ -18,7 +20,7 @@
 }
 
 .Info_content h1 {
-    color: #333; /* 제목 색상 */
+    color: #FFF8DC; /* 제목 색상 */
     font-size: 2.5em; /* 제목 크기 */
 }
 

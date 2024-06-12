@@ -24,6 +24,9 @@
     display: inline-block;
     float: right;
     margin-top: 10px;
+    border: none;
+    background: none;
+    font-weight: bold;
 }
 .sidebar2 h1 {
     width: 100%;

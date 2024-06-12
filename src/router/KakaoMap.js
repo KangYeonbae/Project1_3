@@ -628,15 +628,40 @@ function MyMap() {
     return (
         <div className="My_Map_con">
             <div className="map_nav"></div>
-            <section className="sidebar">
-                <header>
-                    <h2><NavLink to="/">ECO Recycle Hub</NavLink></h2>
-                    <div className="head-weather">
-                        <div className="myLocation">
-                            <Weather/>
-                        </div>
+            <section className="sidebar_side">
+                <div className="search-location">
+                    <div className="location"><h3>길찾기</h3></div>
+                    <div className="address-row">
+                        <div className="label">출발지</div>
+                        <div className="search-location1">{userAddress}</div>
                     </div>
-                </header>
+                    <div className="address-row">
+                        <div className="label">도착지</div>
+                        <div className="search-location1">{address}</div>
+                    </div>
+                </div>
+
+                <div className="search-cate">
+                <button><FaBusAlt onClick={handlBusData}/></button>
+                    <button><FaCar onClick={handleFetchData}/></button>
+                    <button><FaPersonWalking/></button>
+                    <button className="search-btn" onClick={handlBusData}>길찾기</button>
+                </div>
+                <div className="result-trans">
+                    {renderRouteDetails()}
+                    {renderFullRouteDetails()}
+                </div>
+                {/*<header>*/}
+                {/*    <h2><NavLink to="/">ECO Recycle Hub</NavLink></h2>*/}
+                {/*    <div className="head-weather">*/}
+                {/*        <div className="myLocation">*/}
+                {/*            <Weather/>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</header>*/}
+            </section>
+            <section className="sidebar">
+                <div className="imgbox"></div>
                 {reshop &&
                     <RecyclingCenters closeReshop={() => setReashop(false)} setReashop={setReashop} reshop={reshop}
                                       markerData={selectedMarker}/>}
@@ -651,27 +676,6 @@ function MyMap() {
                         <button className="nav_button" onClick={() => toggleView('sidos')}>페트병수거함</button>
                         <button className="nav_button" onClick={() => toggleView('zeroWastes')}>제로웨이스트</button>
                         <button className="nav_button" onClick={() => toggleView('zeroMarks')}>재활용센터</button>
-                    </div>
-                    <div className="search-location">
-                        <div className="address-row">
-                            <div className="label">출발지</div>
-                            <div className="search-location1">{userAddress}</div>
-                        </div>
-                        <div className="address-row">
-                            <div className="label">도착지</div>
-                            <div className="search-location1">{address}</div>
-                        </div>
-                    </div>
-
-                    <div className="search-cate">
-                        <button><FaBusAlt onClick={handlBusData}/></button>
-                        <button><FaCar onClick={handleFetchData}/></button>
-                        <button><FaPersonWalking/></button>
-                        <button className="search-btn" onClick={handlBusData}>길찾기</button>
-                    </div>
-                    <div className="result-trans">
-                        {renderRouteDetails()}
-                        {renderFullRouteDetails()}
                     </div>
 
                     {currentView === 'sidos' && (
@@ -704,6 +708,7 @@ function MyMap() {
                         </div>
                     )}
                 </div>
+
             </section>
             <div
                 className="map-con"
