@@ -1,19 +1,16 @@
-// Category.js
 import React, { useState, useEffect } from 'react';
-import { Navbar, Container, Nav, Modal, Button, Carousel } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import plasticData from "./1_plasticData";
-import disposableData from "./2_disposableData";
-import wasteElecData from "./3_wasteElecData";
-import foodWasteData from "./4_foodWasteData";
-import wasteData from "./5_wasteData";
-import home from "./totalData";
-import "../css/App_border.css"
+import { useParams } from 'react-router-dom';  // URL 매개변수 가져오기 위해 사용
+import { Modal, Button, Carousel, Form } from 'react-bootstrap';
+import axios from 'axios';
+import "../css/App_border.css";
 
-function Category({ category }) {
+function Category() {
+    const { category } = useParams();  // URL 매개변수에서 카테고리 가져오기
     const [data, setData] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [editModal, setEditModal] = useState(false);
+    const [newTitle, setNewTitle] = useState("");
 
     const handleOpenModal = (item) => {
         setSelectedItem(item);
@@ -25,47 +22,53 @@ function Category({ category }) {
         setShowModal(false);
     };
 
-    useEffect(() => {
-        switch (category) {
-            case 'plastic':
-                setData(plasticData);
-                break;
-            case 'disposable':
-                setData(disposableData);
-                break;
-            case 'wasteElec':
-                setData(wasteElecData);
-                break;
-            case 'foodWaste':
-                setData(foodWasteData);
-                break;
-            case 'waste':
-                setData(wasteData);
-                break;
-            default:
-                setData(home);
-                break;
+    const handleEditModal = (item) => {
+        setSelectedItem(item);
+        setNewTitle(item.title);
+        setEditModal(true);
+    };
+
+    const handleEditClose = () => {
+        setSelectedItem(null);
+        setEditModal(false);
+    };
+
+    const handleSave = async () => {
+        try {
+            await axios.post(`http://localhost:3001/b_${category}/update`, {
+                ID: selectedItem.ID,
+                TITLE: newTitle,
+            });
+            setData((prevData) =>
+                prevData.map((item) =>
+                    item.ID === selectedItem.ID ? { ...item, TITLE: newTitle } : item
+                )
+            );
+            handleEditClose();
+        } catch (error) {
+            console.error('Error updating data:', error);
         }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/b_${category}`);
+                setData(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
     }, [category]);
 
     return (
         <div className="container_border">
             <div className="header_box"></div>
-            {/*<Navbar bg="light" data-bs-theme="light">*/}
-            {/*    <Container>*/}
-            {/*        <Navbar.Brand href="/">자원순환 방법</Navbar.Brand>*/}
-            {/*        <Nav className="me-auto">*/}
-            {/*            <Nav.Link as={Link} to="/board/plastic">분리배출</Nav.Link>*/}
-            {/*            <Nav.Link as={Link} to="/board/disposable">일회용품</Nav.Link>*/}
-            {/*            <Nav.Link as={Link} to="/board/wasteElec">폐가전</Nav.Link>*/}
-            {/*            <Nav.Link as={Link} to="/board/foodWaste">음식물 폐기물</Nav.Link>*/}
-            {/*            <Nav.Link as={Link} to="/board/waste">기타폐기물</Nav.Link>*/}
-            {/*        </Nav>*/}
-            {/*    </Container>*/}
-            {/*</Navbar>*/}
             <div className="row">
                 {data.map((item, index) => (
-                    <Card key={index} item={item} onOpenModal={handleOpenModal} />
+                    <Card key={index} item={item} onOpenModal={handleOpenModal} onEditModal={handleEditModal} />
                 ))}
             </div>
 
@@ -75,14 +78,16 @@ function Category({ category }) {
                 </Modal.Header>
                 <Modal.Body>
                     <Carousel>
-                        {selectedItem && selectedItem.images.map((image, index) => (
-                            <Carousel.Item key={index}>
-                                <img
-                                    className="d-block w-100"
-                                    src={process.env.PUBLIC_URL + '/' + image}
-                                    alt={`${selectedItem.title} ${index + 1}`}
-                                />
-                            </Carousel.Item>
+                        {selectedItem && Object.keys(selectedItem).filter(key => key.startsWith('IMG')).map((key, index) => (
+                            selectedItem[key] && (
+                                <Carousel.Item key={index}>
+                                    <img
+                                        className="d-block w-100"
+                                        src={`data:image/png;base64,${selectedItem[key]}`}
+                                        alt={`${selectedItem.TITLE} ${index + 1}`}
+                                    />
+                                </Carousel.Item>
+                            )
                         ))}
                     </Carousel>
                 </Modal.Body>
@@ -90,18 +95,41 @@ function Category({ category }) {
                     <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
                 </Modal.Footer>
             </Modal>
+
+            <Modal show={editModal} onHide={handleEditClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>제목 수정</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="formTitle">
+                            <Form.Label>새로운 제목</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleEditClose}>Close</Button>
+                    <Button variant="primary" onClick={handleSave}>Save changes</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
 
-function Card({ item, onOpenModal }) {
+function Card({ item, onOpenModal, onEditModal }) {
     return (
         <div className="col-md-4 data_border">
             <Button onClick={() => onOpenModal(item)} variant="link">
-                <img src={process.env.PUBLIC_URL + '/' + item.image} alt={item.title} />
+                <img src={`data:image/png;base64,${item.IMG1}`} alt={item.TITLE} />
             </Button>
-            <h5>{item.title}</h5>
-            <p>{item.description}</p>
+            <h5>{item.TITLE}</h5>
+            {/*<p>{item.description}</p>*/}
+            <Button variant="warning" onClick={() => onEditModal(item)}>Edit</Button>
         </div>
     );
 }

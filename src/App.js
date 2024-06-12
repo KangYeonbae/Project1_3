@@ -24,6 +24,9 @@ import SwiperSlider from "./router/SwiperSlider";
 import Footer from "./router/Footer";
 import News from "./router/News";
 import Category from './router/Category';
+import Mypage from './router/Mypage';
+import Products from './router/Products'
+import Posts from './router/Posts'
 
 function App() {
     let navigate = useNavigate();
@@ -111,8 +114,8 @@ function App() {
                                     </NavDropdown>
                                 </Nav>
                                 <Nav>
-                                    <Nav.Link href="#deets">More deets</Nav.Link>
-                                    <Nav.Link eventKey={2} href="#memes">Dank memes</Nav.Link>
+                                    <Nav.Link href="/shop">Zore Shop</Nav.Link>
+                                    <Nav.Link eventKey={2} href="/post">게시판</Nav.Link>
                                     <div className="user-btn">
                                         {isLogin ? (
                                             <div className="login-btn">
@@ -261,6 +264,9 @@ function App() {
                         <Route path="/car" element={<Search_location_car />} />
                         <Route path="/chart" element={<ChartComponent />} />
                         <Route path="/board/:category" element={<Category />} />
+                        <Route path="/mypage" element={<Mypage />} />
+                        <Route path="/shop" element={<Products />}/>
+                        <Route path="/post" element={<Posts />}/>
                     </Routes>
                 </div>
             )}

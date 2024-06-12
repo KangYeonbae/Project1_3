@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Grid, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import '../css/products.css'
 
 
 const products = [
@@ -52,8 +53,10 @@ function Products({ setUserInfo }) {
     };
 
     return (
-        <Container>
-            <Typography variant="h4" gutterBottom>
+    <>
+    <div className="P_header_box"></div>
+    <Container>
+    <Typography variant="h4" gutterBottom>
                 Zero Waste Shop
             </Typography>
             <Grid container spacing={4}>
@@ -81,6 +84,7 @@ function Products({ setUserInfo }) {
                 ))}
             </Grid>
         </Container>
+        </>
     );
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Grid, Card, CardContent, Typography, Button, Link as MuiLink } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import '../css/post.css'
 
 function decodeHtml(html) {
     const txt = document.createElement('textarea');
@@ -49,7 +50,9 @@ function Posts({ user }) {
     };
 
     return (
-        <Container style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <>
+            <div className="Post_header_box"></div>
+        <Container style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: "blue" }}>
             <Typography variant="h4" gutterBottom>
                 게시판
             </Typography>
@@ -86,6 +89,7 @@ function Posts({ user }) {
                 ))}
             </div>
         </Container>
+            </>
     );
 }
 

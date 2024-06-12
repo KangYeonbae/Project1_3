@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-import '../css/login.css'; // 이렇게 CSS 파일을 임포트하세요
+import '../css/login.css';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage({ setLoginStatus, setLoginUser }) {
@@ -24,13 +24,12 @@ function LoginPage({ setLoginStatus, setLoginUser }) {
             const response = await axios.post('http://localhost:3000/login', {
                 userid: userId,
                 password: password
-            });
-            console.log(response.data)
-            if (response.data.message === 'Login successful!') {
-                console.log("로그인 성공!");
+            }, { withCredentials: true });
+            console.log(response.data);
+            if (response.status === 200) {
                 setLoginStatus(true);  // 로그인 상태를 true로 설정
-                setLoginUser({ userid: response.data.user.userid, nickname: response.data.user.nickname });  // 사용자 정보 업데이트
-                navigate('/'); // 홈으로 리다이렉트
+                setLoginUser(response.data.user);  // 사용자 정보 업데이트 (전체 객체 전달)
+                navigate('/mypage'); // 마이페이지로 리다이렉트
             } else {
                 console.log("로그인 실패: 잘못된 자격증명");
             }

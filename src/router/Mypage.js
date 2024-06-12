@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { TextField, Button, Box, Typography, Container } from '@mui/material';
+import "../css/mypage.css"
 
 function Mypage({ user, setLoginUser, setLoginStatus }) {
     const [userInfo, setUserInfo] = useState({
@@ -64,6 +65,8 @@ function Mypage({ user, setLoginUser, setLoginStatus }) {
 
     // Material-UI 컴포넌트를 사용한 렌더링 로직
     return (
+        <>
+            <div className="Mypage_header_box"></div>
         <Container maxWidth="sm">
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h4" component="h1" gutterBottom>
@@ -99,6 +102,7 @@ function Mypage({ user, setLoginUser, setLoginStatus }) {
                 </Box>
             </Box>
         </Container>
+        </>
     );
 }
 
