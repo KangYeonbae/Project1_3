@@ -44,6 +44,7 @@ function Products({ setUserInfo }) {
                     realname: userInfoResponse.data.REALNAME,
                     mileage: userInfoResponse.data.MILEAGE
                 });
+                console.log(userInfoResponse.data)
                 navigate('/mypage'); // 구매 후 마이페이지로 리디렉션
             }
         } catch (error) {

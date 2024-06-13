@@ -7,20 +7,12 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-
-oracledb.autoCommit = true;
-
-const app = express();
-const port = 3001;
-app.use(cors());
-
-// app.use(express.json()); // JSON 형식의 데이터를 파싱할 수 있도록 설정
-// oracledb.initOracleClient({liDir: './intantclient_21_14'});
+const {autoCommit} = require("oracledb");
 
 oracledb.autoCommit = true;
 
 try {
-    oracledb.initOracleClient({ libDir: 'D:/instantclient_21_14' }); // 새로 다운 받아야함
+    oracledb.initOracleClient({ libDir: 'D:\\instantclient_21_14' }); // 새로 다운 받아야함
     oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
     oracledb.fetchAsString = [oracledb.CLOB];
     console.log('Oracle Instant Client 초기화 성공');
@@ -28,6 +20,20 @@ try {
     console.error('Oracle Instant Client 초기화 실패', err);
     process.exit(1);
 }
+
+
+const app = express();
+const port = 3001;
+
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
+
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 
 
@@ -134,12 +140,12 @@ app.post('/purchase', async (req, res) => {
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        const updateMileageSql = `
-            UPDATE users
-            SET mileage = mileage + :mileage
-            WHERE id = :userId
-        `;
-        await connection.execute(updateMileageSql, [mileageToAdd, userId]);
+        // const updateMileageSql = `
+        //     UPDATE users
+        //     SET mileage = mileage + :mileage
+        //     WHERE id = :userId
+        // `;
+        // await connection.execute(updateMileageSql, [mileageToAdd, userId]);
 
         const insertTransactionSql = `
             INSERT INTO mileage_transactions (id, user_id, amount, transaction_type)
@@ -147,7 +153,7 @@ app.post('/purchase', async (req, res) => {
         `;
         await connection.execute(insertTransactionSql, [userId, mileageToAdd]);
 
-        res.status(200).send('구매가 완료되었으며 마일리지가 적립되었습니다.');
+        res.status(200).send('구매가 완료되었으며 마일리지ok.');
     } catch (error) {
         console.error('오류 발생: ', error);
         res.status(500).send('서버 오류');
@@ -265,19 +271,21 @@ app.post('/mileage/use', async (req, res) => {
         }
 
         // 마일리지 차감
-        const updateMileageSql = `
-            UPDATE users
-            SET mileage = mileage - :amount
-            WHERE id = :userId
-        `;
-        await connection.execute(updateMileageSql, [amountNumber, userId]);
+        // const updateMileageSql = `
+        //     UPDATE users
+        //     SET mileage = mileage - :amount
+        //     WHERE id = :userId
+        // `;
+        // const updateResult = await connection.execute(updateMileageSql, { amount: amountNumber, userId: userId }, { autoCommit: true });
+        // console.log(`Updated mileage: ${updateResult.rowsAffected} rows`);
 
         // 마일리지 차감 내역 기록
         const insertTransactionSql = `
             INSERT INTO mileage_transactions (id, user_id, amount, transaction_type)
             VALUES (mileage_transactions_seq.NEXTVAL, :userId, :amount, 'use')
         `;
-        await connection.execute(insertTransactionSql, [userId, amountNumber]);
+        const insertResult = await connection.execute(insertTransactionSql, { userId: userId, amount: amountNumber }, { autoCommit: true });
+        console.log(`Inserted transaction: ${insertResult.rowsAffected} rows`);
 
         res.status(200).send('마일리지가 성공적으로 차감되었습니다.');
     } catch (error) {
@@ -289,6 +297,8 @@ app.post('/mileage/use', async (req, res) => {
         }
     }
 });
+
+
 
 app.get('/posts', async (req, res) => {
     let connection;

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import DeletePost from './Delete';
 import { Container, Typography, Button, Box } from '@mui/material';
-import '../css/DetailPost.css';
+// import '../css/DetailPost.css';
 
 function DetailPost({ user }) {
     const { id } = useParams();
@@ -44,6 +44,8 @@ function DetailPost({ user }) {
     };
 
     return (
+        <>
+        <div className="header_box"></div>
         <Container className="detail-post-container">
             <Typography variant="h4" gutterBottom className="detail-post-title">
                 {post.TITLE}
@@ -51,7 +53,7 @@ function DetailPost({ user }) {
             <Typography variant="body1" paragraph className="detail-post-content">
                 {post.CONTENT}
             </Typography>
-            {imageUrl && <img src={imageUrl} alt="Post Image" className="detail-post-image" />}
+            {imageUrl && <img src={imageUrl} alt="Post" className="detail-post-image" />}
             {user && user.id === post.AUTHOR_ID && ( // 로그인한 유저의 ID와 작성자의 ID가 일치할 경우에만 버튼 활성화
                 <Box mt={2} className="detail-post-buttons">
                     <Button variant="contained" color="primary" onClick={handleEdit} style={{ marginRight: '10px' }}>
@@ -61,6 +63,7 @@ function DetailPost({ user }) {
                 </Box>
             )}
         </Container>
+            </>
     );
 }
 

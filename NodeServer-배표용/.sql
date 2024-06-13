@@ -3,13 +3,13 @@ CREATE TABLE users (
                        userid VARCHAR2(100),  -- UserID 또는 User 닉네임
                        password VARCHAR2(100),  -- 패스워드
                        nickname VARCHAR2(100),   -- 닉네임
-                       realname VARCHAR2(100)      -- 실제 사용자 이름
+                       realname VARCHAR2(100),      -- 실제 사용자 이름
                        mileage NUMBER -- 마일리지 6/3 추가
 );
 
- -- 원하시는대로 밑에 내용은 변경하세요.
-INSERT INTO users (id, userid, password, nickname, realname) VALUES (1, 'dusqo', '123456', '연배', '강연배');
-INSERT INTO users (id, userid, password, nickname, realname) VALUES (2, 'wldn', '1234', '지우지우', '이지우');
+-- 원하시는대로 밑에 내용은 변경하세요.
+INSERT INTO users (id, userid, password, nickname, realname, mileage) VALUES (1, 'dusqo', '123456', '연배', '강연배', 0);
+INSERT INTO users (id, userid, password, nickname, realname, mileage) VALUES (2, 'wldn', '1234', '지우지우', '이지우', 0);
 
 CREATE SEQUENCE RECYCLING_CENTER_ID_SEQ START WITH 1 INCREMENT BY 1;
 
@@ -60,14 +60,18 @@ CREATE TABLE ZERO (
                       name VARCHAR2(200)
 );
 
-CREATE OR REPLACE TRIGGER zero_before_insert
-BEFORE INSERT ON ZERO
-FOR EACH ROW
-BEGIN
-SELECT zero_seq.NEXTVAL INTO :new.id FROM dual;
-END;
+CREATE TABLE mileage_transactions (
+                                      id NUMBER PRIMARY KEY,
+                                      user_id NUMBER,
+                                      amount NUMBER,
+                                      transaction_type VARCHAR2(20),
+                                      transaction_date DATE DEFAULT SYSDATE,
+                                      FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
--- 게시판 테이블추가6/13
+CREATE SEQUENCE mileage_transactions_seq START WITH 1 INCREMENT BY 1;
+
+
 CREATE TABLE posts (
                        ID NUMBER NOT NULL,
                        AUTHOR_ID NUMBER,
@@ -79,18 +83,6 @@ CREATE TABLE posts (
                        IMAGE_PATH VARCHAR2(255),
                        CONSTRAINT posts_pk PRIMARY KEY (ID)
 );
-
--- 마일리지 테이블 6/3 추가
-CREATE TABLE mileage_transactions (
-                                      id NUMBER PRIMARY KEY,
-                                      user_id NUMBER,
-                                      amount NUMBER,
-                                      transaction_type VARCHAR2(20),
-                                      transaction_date DATE DEFAULT SYSDATE,
-                                      FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE SEQUENCE mileage_transactions_seq START WITH 1 INCREMENT BY 1;
 -- 게시판 시퀀스 생성
 CREATE SEQUENCE posts_seq START WITH 1 INCREMENT BY 1;
 -- 게시판 트리거 생성
@@ -102,9 +94,18 @@ BEGIN
 END;
 
 
+CREATE OR REPLACE TRIGGER zero_before_insert
+BEFORE INSERT ON ZERO
+FOR EACH ROW
+BEGIN
+SELECT zero_seq.NEXTVAL INTO :new.id FROM dual;
+END;
+
+
 
 DROP TRIGGER UPDATE_MILEAGE_TRANSACTION;
---마일리지 트리거 생성
+
+
 CREATE OR REPLACE TRIGGER update_mileage_transaction
 AFTER INSERT ON MILEAGE_TRANSACTIONS
 FOR EACH ROW
