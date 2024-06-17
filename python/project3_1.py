@@ -1,14 +1,14 @@
 import random as rnd  # 이름 변경
 
-import cx_Oracle
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 from flask_cors import CORS
 import requests
-import pandas as pd
 import json
 import geopandas as gpd
-import xml.etree.ElementTree as ET
+from route.routes import recommend_bp  # 라우트 경로로 블루프린트 임포트
+from route.images import images_bp
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -22,6 +22,11 @@ app.debug = True
 #API Key(강연배)
 access_key = 'y+MUXWRZdywDBDs64HplB3XAbAYdvxWcQ54m88FRrpMBgZAm1tcqkUc8xkXrtl4eRgFiJLN2Tmi/2iJp8tQX9A=='
 
+
+
+# 블루프린트 등록
+app.register_blueprint(recommend_bp, url_prefix='/api')
+app.register_blueprint(images_bp, url_prefix='/images')
 
 @app.route('/api/random-data')
 def random_data():

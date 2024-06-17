@@ -605,10 +605,10 @@ function MyMap() {
         경기: NAME => /(고양|광명|김포|남양주|부천|분당|성남|수원|시흥|오산|용인|파주|평택|하남|화성)/.test(NAME),
         인천: NAME => NAME.startsWith('인천'),
         강원도: NAME => /(강릉|원주|춘천)/.test(NAME),
-        충청도: NAME => /(논산|대전|천안|태안|청주)/.test(NAME),
+        충청도: NAME => /(논산|대전|천안|태안|청주|당진)/.test(NAME),
         경상도: NAME => /(경주|구미|김천|김해|대구|부산|안동|양산|울산|진주|창원|통영)/.test(NAME),
         전라도: NAME => /(광주|군산|나주|담양|순천|목포|전주)/.test(NAME),
-        제주도: NAME => NAME.startsWith('제주'),
+        제주도: NAME => NAME.startsWith('제주')
         // 나머지 카테고리에 대해서도 비슷한 규칙을 추가합니다.
     };
 

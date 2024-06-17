@@ -14,16 +14,16 @@ function ZeroCenters(props) {
 
     const [address, setAddress] = useState('');
     const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
+    const [recommend, setRecommend] = useState([]);
+    const [recommendLoading, setRecommendLoading] = useState(true);
 
     useEffect(() => {
         if (props.selectZeroshop) {
             const geocoder = new kakao.maps.services.Geocoder();
-
             const coord = new kakao.maps.LatLng(props.selectZeroshop.LATITUDE, props.selectZeroshop.LONGITUDE);
             geocoder.coord2Address(coord.getLng(), coord.getLat(), function(result, status) {
                 if (status === kakao.maps.services.Status.OK) {
-                    console.log(result[0].address.address_name);
                     setAddress(result[0].address.address_name);
                 }
             });
@@ -32,21 +32,41 @@ function ZeroCenters(props) {
 
     useEffect(() => {
         const fetchImages = async () => {
-            setLoading(true); // Set loading to true before fetching
+            setLoading(true);
             try {
-                const response = await axios.get('http://localhost:3001/zeroimg'); // 서버 URL을 입력하세요
-                setImages(response.data);
+                const response = await axios.get(`http://localhost:5000/images/${props.selectZeroshop.ID}`);
+                console.log(response.data);
+                setImages([response.data]);  // 단일 객체를 배열로 변환합니다.
             } catch (error) {
                 console.error('Error fetching images', error);
             } finally {
-                setLoading(false); // Set loading to false after fetching is done
+                setLoading(false);
             }
         };
 
-        fetchImages();
-    }, []);
+        if (props.selectZeroshop) {
+            fetchImages();
+        }
+    }, [props.selectZeroshop]);
 
-    // 선택된 샵에 해당하는 이미지 필터링
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            setRecommendLoading(true);
+            try {
+                const response = await axios.get(`http://localhost:5000/api/recommend/${props.selectZeroshop.ID}`);
+                setRecommend(response.data);
+            } catch (error) {
+                console.error('Error fetching recommendations', error);
+            } finally {
+                setRecommendLoading(false);
+            }
+        };
+
+        if (props.selectZeroshop) {
+            fetchRecommendations();
+        }
+    }, [props.selectZeroshop]);
+
     const filteredImages = images.filter(image => image.id === props.selectZeroshop.ID);
 
     return (
@@ -62,14 +82,14 @@ function ZeroCenters(props) {
                         <div className="details">
                             <h4>제로웨이스트샵</h4>
                             <h1>{props.selectZeroshop.NAME.split('_')[1]}</h1><br/>
-                            <h4>주소</h4>
-                            <p>지번: {address}<br/></p>
+                            <p>주소 : {address}</p>
+                            <p>{props.selectZeroshop.INFO}</p>
                         </div>
                     ) : (
                         <p>No marker data available</p>
                     )}
                     <div>
-                        {loading ? ( // Check if it's loading
+                        {loading ? (
                             <p>Loading images...</p>
                         ) : (
                             filteredImages.length > 0 ? (
@@ -102,6 +122,26 @@ function ZeroCenters(props) {
                             )
                         )}
                     </div>
+                </div>
+                <div>
+                    <h4>이런곳이 비슷해요!</h4>
+                    {recommendLoading ? (
+                        <p>Loading recommendations...</p>
+                    ) : (
+                        recommend.length > 0 ? (
+                            <ul>
+                                {recommend.map((item, index) => (
+                                    <li key={index}>
+                                        <h5>{item.name}</h5>
+                                        {/*<p>{item.info}</p>*/}
+                                        {/*<p>{item.hash_tags}</p>*/}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No recommendations available</p>
+                        )
+                    )}
                 </div>
             </div>
         </div>
