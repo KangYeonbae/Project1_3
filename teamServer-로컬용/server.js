@@ -8,6 +8,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const {autoCommit} = require("oracledb");
+const authRoutes = require('./routes/authRoutes');
+require('../dotevn').config();
 
 oracledb.autoCommit = true;
 
@@ -67,49 +69,49 @@ const upload = multer({ storage: storage });
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
-
-app.post('/login', async (req, res) => {
-    const { userid, password } = req.body;
-    if (!userid || !password) {
-        return res.status(400).send('User ID와 패스워드는 필수입니다.');
-    }
-
-    const authenticatedUser = await verifyID(userid, password);
-    console.log(authenticatedUser)
-    if (authenticatedUser) {
-        req.session.userId = authenticatedUser.id;
-        return res.json({ message: '로그인 성공!', user: authenticatedUser });
-    } else {
-        return res.status(401).send('유효하지 않은 자격 증명입니다.');
-    }
-});
-
-async function verifyID(userid, password) {
-    let connection;
-    try {
-        connection = await oracledb.getConnection(dbConfig);
-        const sql_query = 'SELECT * FROM users WHERE userid = :userid AND password = :password';
-        const result = await connection.execute(sql_query, [userid, password]);
-        if (result.rows.length > 0) {
-            return {
-                id: result.rows[0].ID,
-                userid: result.rows[0].USERID,
-                nickname: result.rows[0].NICKNAME,
-                realname: result.rows[0].REALNAME,
-                mileage: result.rows[0].MILEAGE // 마일리지 필드 추가
-            };
-        } else {
-            return null;
-        }
-    } catch (error) {
-        console.error('오류 발생: ', error);
-        throw error;
-    } finally {
-        if (connection) {
-            await connection.close();
-        }
-    }
-}
+//
+// app.post('/login', async (req, res) => {
+//     const { userid, password } = req.body;
+//     if (!userid || !password) {
+//         return res.status(400).send('User ID와 패스워드는 필수입니다.');
+//     }
+//
+//     const authenticatedUser = await verifyID(userid, password);
+//     console.log(authenticatedUser)
+//     if (authenticatedUser) {
+//         req.session.userId = authenticatedUser.id;
+//         return res.json({ message: '로그인 성공!', user: authenticatedUser });
+//     } else {
+//         return res.status(401).send('유효하지 않은 자격 증명입니다.');
+//     }
+// });
+//
+// async function verifyID(userid, password) {
+//     let connection;
+//     try {
+//         connection = await oracledb.getConnection(dbConfig);
+//         const sql_query = 'SELECT * FROM users WHERE userid = :userid AND password = :password';
+//         const result = await connection.execute(sql_query, [userid, password]);
+//         if (result.rows.length > 0) {
+//             return {
+//                 id: result.rows[0].ID,
+//                 userid: result.rows[0].USERID,
+//                 nickname: result.rows[0].NICKNAME,
+//                 realname: result.rows[0].REALNAME,
+//                 mileage: result.rows[0].MILEAGE // 마일리지 필드 추가
+//             };
+//         } else {
+//             return null;
+//         }
+//     } catch (error) {
+//         console.error('오류 발생: ', error);
+//         throw error;
+//     } finally {
+//         if (connection) {
+//             await connection.close();
+//         }
+//     }
+// }
 
 app.post('/purchase', async (req, res) => {
     const userId = req.session.userId;
@@ -425,7 +427,6 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT; // 결과를 객체 형식으�
 app.use('/recyclingcenters', require('./routes/recycling'))
 app.use('/napron', require('./routes/Napron'))
 app.use('/zero', require('./routes/zero'))
-// app.use('/zeroimg', require('./routes/zero_image'))
 app.use('/bus', require('./routes/bus'))
 app.use('/home', require('./routes/year2015'))
 app.use('/home1', require('./routes/year2020'))
@@ -434,6 +435,7 @@ app.use('/b_disposable', require('./routes/b_disposable_image'))
 app.use('/b_foodwaste', require('./routes/b_foodwaste_image'))
 app.use('/b_wasteelec', require('./routes/b_wasteelec_image'))
 app.use('/b_waste', require('./routes/b_waste_image'))
+app.use(authRoutes); // 베이스 경로 설정
 
 
 

@@ -15,7 +15,7 @@ import ZeroCenters from "./router/bar_zero"
 import NapronCenters from "./router/bar_Napron"
 import Search_location from "./router/search_location";
 import Search_location_car from "./router/search_location_car";
-import ChartComponent from "./router/Chart"
+import ChartComponent from "./router/사용하지않는파일/Chart"
 import {GiEcology, GiHamburgerMenu} from "react-icons/gi";
 import {FaBusAlt, FaCar} from "react-icons/fa";
 import {FaPersonWalking, FaTrainSubway} from "react-icons/fa6";

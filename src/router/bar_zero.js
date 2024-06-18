@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, A11y } from 'swiper/modules';
 
+import '../css/bar_zero.css'
+
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -67,6 +69,8 @@ function ZeroCenters(props) {
         }
     }, [props.selectZeroshop]);
 
+    console.log(props.selectZeroshop)
+
     const filteredImages = images.filter(image => image.id === props.selectZeroshop.ID);
 
     return (
@@ -80,10 +84,13 @@ function ZeroCenters(props) {
                 <div>
                     {props.selectZeroshop ? (
                         <div className="details">
-                            <h4>제로웨이스트샵</h4>
+                            <p style={{fontWeight:'bolder'}}>제로웨이스트샵</p>
                             <h1>{props.selectZeroshop.NAME.split('_')[1]}</h1><br/>
                             <p>주소 : {address}</p>
-                            <p>{props.selectZeroshop.INFO}</p>
+                            <div className="info_box">
+                                <p>{props.selectZeroshop.INFO}</p>
+                                <p>{props.selectZeroshop.hash_tags}</p>
+                            </div>
                         </div>
                     ) : (
                         <p>No marker data available</p>
@@ -123,7 +130,7 @@ function ZeroCenters(props) {
                         )}
                     </div>
                 </div>
-                <div>
+                <div className="recommend">
                     <h4>이런곳이 비슷해요!</h4>
                     {recommendLoading ? (
                         <p>Loading recommendations...</p>
