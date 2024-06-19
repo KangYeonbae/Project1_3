@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import { Container, Grid, Card, CardContent, Typography, Button, Link as MuiLink } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/post.css'
+import {AuthContext} from "./AuthContext";
 
 function decodeHtml(html) {
     const txt = document.createElement('textarea');
@@ -19,7 +20,8 @@ function formatDate(dateString) {
     return date.toLocaleDateString('ko-KR', options);
 }
 
-function Posts({ user }) {
+function Posts() {
+    const { user } = useContext(AuthContext); // AuthContext에서 user 가져오기
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(10);
@@ -27,11 +29,16 @@ function Posts({ user }) {
 
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [user]);
 
     const fetchPosts = async () => {
+        const token = localStorage.getItem('token')
         try {
-            const response = await axios.get('http://localhost:3001/posts');
+            const response = await axios.get('http://localhost:3001/posts',{
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             console.log('Fetched Posts:', response.data); // 데이터 확인
             setPosts(response.data);
         } catch (error) {

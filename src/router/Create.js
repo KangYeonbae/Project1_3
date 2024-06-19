@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import axios from 'axios';
 import { Container, TextField, Button, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {AuthContext} from "./AuthContext";
 function CreatePost({ fetchPosts }) {
+    const { user } = useContext(AuthContext);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
@@ -14,11 +16,13 @@ function CreatePost({ fetchPosts }) {
         formData.append('title', title);
         formData.append('content', content);
         formData.append('image', image);
+        const token = localStorage.getItem('token')
 
         try {
             const response = await axios.post('http://localhost:3001/posts', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
                 },
                 withCredentials: true
             });

@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // 세션 설정
 app.use(session({
-    secret: 'your-secret-key', // 세션 암호화 키
+    secret: process.env.SESSION_SECRET, // 세션 암호화 키
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -120,7 +120,7 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 // }
 
 app.post('/purchase', authMiddleware, async (req, res) => {
-    const userId = req.user.userid;
+    const userId = req.user.id; // user.id는 숫자 타입으로 사용됩니다.
     const { productId, price } = req.body;
 
     console.log('Purchasing product:', { userId, productId, price });
@@ -133,7 +133,6 @@ app.post('/purchase', authMiddleware, async (req, res) => {
         return res.status(400).send('상품 ID와 가격은 필수입니다.');
     }
 
-    // 데이터 형식을 숫자로 변환 (필요시)
     const productIdNumber = Number(productId);
     const priceNumber = Number(price);
 
@@ -148,20 +147,18 @@ app.post('/purchase', authMiddleware, async (req, res) => {
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        // const updateMileageSql = `
-        //     UPDATE users
-        //     SET mileage = mileage + :mileage
-        //     WHERE id = :userId
-        // `;
-        // await connection.execute(updateMileageSql, [mileageToAdd, userId]);
 
         const insertTransactionSql = `
             INSERT INTO mileage_transactions (id, user_id, amount, transaction_type)
             VALUES (mileage_transactions_seq.NEXTVAL, :userId, :amount, 'add')
         `;
-        await connection.execute(insertTransactionSql, [userId, mileageToAdd]);
+        const bindVars = {
+            userId: { val: userId, dir: oracledb.BIND_IN, type: oracledb.NUMBER },
+            amount: { val: mileageToAdd, dir: oracledb.BIND_IN, type: oracledb.NUMBER }
+        };
+        await connection.execute(insertTransactionSql, bindVars, { autoCommit: true });
 
-        res.status(200).send('구매가 완료되었으며 마일리지ok.');
+        res.status(200).send('구매가 완료되었으며 마일리지 적립되었습니다.');
     } catch (error) {
         console.error('오류 발생: ', error);
         res.status(500).send('서버 오류');
@@ -172,8 +169,26 @@ app.post('/purchase', authMiddleware, async (req, res) => {
     }
 });
 
+async function clobToString(clob) {
+    return new Promise((resolve, reject) => {
+        let clobData = '';
+        clob.setEncoding('utf8'); // Set the encoding to read CLOB data
+        clob.on('data', chunk => {
+            clobData += chunk;
+        });
+        clob.on('end', () => {
+            resolve(clobData);
+        });
+        clob.on('error', err => {
+            reject(err);
+        });
+    });
+}
+
+
+
 app.post('/posts', upload.single('image'), authMiddleware, async (req, res) => {
-    const userId = req.user.userid;
+    const userId = req.user.id;
     const { title, content } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -187,10 +202,33 @@ app.post('/posts', upload.single('image'), authMiddleware, async (req, res) => {
 
         // 새로운 게시글 ID 생성
         const postIdResult = await connection.execute('SELECT posts_seq.NEXTVAL FROM DUAL');
-        const postId = postIdResult.rows[0][0];
+        const postId = postIdResult.rows[0].NEXTVAL;
 
-        const sql_query = 'INSERT INTO posts (id, author_id, title, content, image_path) VALUES (:id, :author_id, :title, :content, :image_path)';
-        await connection.execute(sql_query, [postId, userId, title, content, imagePath]);
+        // 게시글 삽입
+        const sql_query = `INSERT INTO posts (id, author_id, title, content, image_path) 
+                           VALUES (:id, :author_id, :title, EMPTY_CLOB(), :image_path) 
+                           RETURNING content INTO :content`;
+        const bindVars = {
+            id: { val: postId, dir: oracledb.BIND_IN, type: oracledb.NUMBER },
+            author_id: { val: userId, dir: oracledb.BIND_IN, type: oracledb.NUMBER },
+            title: { val: title, dir: oracledb.BIND_IN, type: oracledb.STRING },
+            image_path: { val: imagePath, dir: oracledb.BIND_IN, type: oracledb.STRING },
+            content: { dir: oracledb.BIND_OUT, type: oracledb.CLOB }
+        };
+
+        const result = await connection.execute(sql_query, bindVars, { autoCommit: false });
+
+        const lob = result.outBinds.content[0];
+        await new Promise((resolve, reject) => {
+            lob.on('error', (err) => reject(err));
+            lob.on('finish', () => resolve());
+            lob.write(content, 'utf8', (err) => {
+                if (err) reject(err);
+                lob.end();
+            });
+        });
+
+        await connection.commit();
 
         return res.status(200).send('게시글이 성공적으로 작성되었습니다.');
     } catch (error) {
@@ -202,21 +240,7 @@ app.post('/posts', upload.single('image'), authMiddleware, async (req, res) => {
         }
     }
 });
-async function clobToString(clob) {
-    return new Promise((resolve, reject) => {
-        let clobData = '';
-        clob.setEncoding('utf8'); // Set the encoding to read clob data
-        clob.on('data', chunk => {
-            clobData += chunk;
-        });
-        clob.on('end', () => {
-            resolve(clobData);
-        });
-        clob.on('error', err => {
-            reject(err);
-        });
-    });
-}
+
 app.get('/mypage', authMiddleware, async (req, res) => {
     const userId = req.user.userid;
 
@@ -227,8 +251,15 @@ app.get('/mypage', authMiddleware, async (req, res) => {
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        const sql_query = 'SELECT nickname, realname, mileage FROM users WHERE id = :userId';
-        const result = await connection.execute(sql_query, [userId]);
+        const sql_query = 'SELECT nickname, realname, mileage FROM users WHERE userid = :userId';
+        const bindVars = {
+            userId: {
+                val: userId,
+                dir: oracledb.BIND_IN,
+                type: oracledb.STRING
+            }
+        };
+        const result = await connection.execute(sql_query, bindVars);
         if (result.rows.length > 0) {
             const user = result.rows[0];
             return res.json({
@@ -249,13 +280,16 @@ app.get('/mypage', authMiddleware, async (req, res) => {
     }
 });
 
+
 app.post('/mileage/use', authMiddleware, async (req, res) => {
-    const userId =  req.user.userid;
+    console.log('req.user:', req.user); // req.user 출력
     const { amount } = req.body;
 
-    if (!userId) {
+    if (!req.user || !req.user.id) {
         return res.status(401).send('로그인이 필요합니다.');
     }
+
+    const userId = Number(req.user.id); // req.user.id 사용
 
     if (!amount) {
         return res.status(400).send('마일리지 금액은 필수입니다.');
@@ -263,37 +297,36 @@ app.post('/mileage/use', authMiddleware, async (req, res) => {
 
     const amountNumber = Number(amount);
 
-    if (isNaN(amountNumber)) {
-        return res.status(400).send('마일리지 금액은 숫자여야 합니다.');
+    if (isNaN(userId) || isNaN(amountNumber)) {
+        console.error('Invalid userId or amount:', userId, amountNumber); // 추가 로그
+        return res.status(400).send('마일리지 금액과 사용자 ID는 숫자여야 합니다.');
     }
+
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
 
         // 사용자의 현재 마일리지 확인
         const checkMileageSql = 'SELECT mileage FROM users WHERE id = :userId';
-        const checkResult = await connection.execute(checkMileageSql, [userId]);
+        const checkResult = await connection.execute(checkMileageSql, {
+            userId: { val: userId, dir: oracledb.BIND_IN, type: oracledb.NUMBER }
+        });
         const currentMileage = checkResult.rows.length > 0 ? checkResult.rows[0].MILEAGE : 0;
 
         if (currentMileage < amountNumber) {
             return res.status(400).send('보유한 마일리지가 부족합니다.');
         }
 
-        // 마일리지 차감
-        // const updateMileageSql = `
-        //     UPDATE users
-        //     SET mileage = mileage - :amount
-        //     WHERE id = :userId
-        // `;
-        // const updateResult = await connection.execute(updateMileageSql, { amount: amountNumber, userId: userId }, { autoCommit: true });
-        // console.log(`Updated mileage: ${updateResult.rowsAffected} rows`);
-
         // 마일리지 차감 내역 기록
         const insertTransactionSql = `
             INSERT INTO mileage_transactions (id, user_id, amount, transaction_type)
             VALUES (mileage_transactions_seq.NEXTVAL, :userId, :amount, 'use')
         `;
-        const insertResult = await connection.execute(insertTransactionSql, { userId: userId, amount: amountNumber }, { autoCommit: true });
+        const bindVars = {
+            userId: { val: userId, dir: oracledb.BIND_IN, type: oracledb.NUMBER },
+            amount: { val: amountNumber, dir: oracledb.BIND_IN, type: oracledb.NUMBER }
+        };
+        const insertResult = await connection.execute(insertTransactionSql, bindVars, { autoCommit: true });
         console.log(`Inserted transaction: ${insertResult.rowsAffected} rows`);
 
         res.status(200).send('마일리지가 성공적으로 차감되었습니다.');
@@ -306,6 +339,7 @@ app.post('/mileage/use', authMiddleware, async (req, res) => {
         }
     }
 });
+
 
 
 
@@ -338,13 +372,18 @@ app.get('/posts', authMiddleware, async (req, res) => {
 });
 
 
-app.get('/posts/:id', authMiddleware,  async (req, res) => {
-    const postId = req.params.id;
+
+app.get('/posts/:id', authMiddleware, async (req, res) => {
+    const postId = Number(req.params.id); // postId를 숫자로 변환
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
-        const sql_query = 'SELECT id, author_id, title, content, image_path FROM posts WHERE id = :id';;
-        const result = await connection.execute(sql_query, [postId]);
+        const sql_query = 'SELECT id, author_id, title, content, image_path FROM posts WHERE id = :id';
+        const bindVars = {
+            id: { val: postId, dir: oracledb.BIND_IN, type: oracledb.NUMBER }
+        };
+        const result = await connection.execute(sql_query, bindVars);
+
         if (result.rows.length > 0) {
             const post = result.rows[0];
             if (post.CONTENT instanceof oracledb.Lob) {
@@ -364,10 +403,14 @@ app.get('/posts/:id', authMiddleware,  async (req, res) => {
     }
 });
 
+
+
+
+
 // 게시글 삭제
-app.delete('/posts/:id', authMiddleware,  async (req, res) => {
-    const postId = req.params.id;
-    const userId =  req.user.userid;
+app.delete('/posts/:id', authMiddleware, async (req, res) => {
+    const postId = Number(req.params.id);
+    const userId = req.user.id;
 
     if (!userId) {
         return res.status(401).send('로그인이 필요합니다.');
@@ -377,7 +420,19 @@ app.delete('/posts/:id', authMiddleware,  async (req, res) => {
     try {
         connection = await oracledb.getConnection(dbConfig);
         const sql_query = 'DELETE FROM posts WHERE id = :id AND author_id = :author_id';
-        const result = await connection.execute(sql_query, [postId, userId]);
+        const bindVars = {
+            id: {
+                val: postId,
+                dir: oracledb.BIND_IN,
+                type: oracledb.NUMBER
+            },
+            author_id: {
+                val: userId,
+                dir: oracledb.BIND_IN,
+                type: oracledb.NUMBER
+            }
+        };
+        const result = await connection.execute(sql_query, bindVars);
         if (result.rowsAffected === 0) {
             return res.status(404).send('게시글을 찾을 수 없거나 삭제 권한이 없습니다.');
         }
@@ -392,9 +447,10 @@ app.delete('/posts/:id', authMiddleware,  async (req, res) => {
     }
 });
 
+
 // 게시글 수정
 app.put('/posts/:id', upload.single('image'), authMiddleware, async (req, res) => {
-    const userId =  req.user.userid;
+    const userId = req.user.userid;
     const postId = req.params.id;
     const { title, content } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
@@ -410,7 +466,34 @@ app.put('/posts/:id', upload.single('image'), authMiddleware, async (req, res) =
         const sql_query = `UPDATE posts 
                            SET title = :title, content = :content, image_path = NVL(:image_path, image_path) 
                            WHERE id = :id AND author_id = :author_id`;
-        const result = await connection.execute(sql_query, [title, content, imagePath, postId, userId]);
+        const bindVars = {
+            title: {
+                val: title,
+                dir: oracledb.BIND_IN,
+                type: oracledb.STRING
+            },
+            content: {
+                val: content,
+                dir: oracledb.BIND_IN,
+                type: oracledb.STRING
+            },
+            image_path: {
+                val: imagePath,
+                dir: oracledb.BIND_IN,
+                type: oracledb.STRING
+            },
+            id: {
+                val: postId,
+                dir: oracledb.BIND_IN,
+                type: oracledb.NUMBER
+            },
+            author_id: {
+                val: userId,
+                dir: oracledb.BIND_IN,
+                type: oracledb.NUMBER
+            }
+        };
+        const result = await connection.execute(sql_query, bindVars);
         if (result.rowsAffected === 0) {
             return res.status(404).send('게시글을 찾을 수 없거나 수정 권한이 없습니다.');
         }
@@ -425,6 +508,7 @@ app.put('/posts/:id', upload.single('image'), authMiddleware, async (req, res) =
         }
     }
 });
+
 
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT; // 결과를 객체 형식으로 받기 위한 설정

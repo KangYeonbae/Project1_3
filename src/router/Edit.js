@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, TextField, Button, Box, Typography } from '@mui/material';
+import {AuthContext} from "./AuthContext";
 
-function EditPost({ user }) {
+function EditPost() {
+    const { user } = useContext(AuthContext);
     const { id } = useParams();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -12,9 +14,14 @@ function EditPost({ user }) {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const token = localStorage.getItem('token')
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/posts/${id}`);
+                const response = await axios.get(`http://localhost:3001/posts/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 const postData = response.data;
                 setPost(postData);
                 setTitle(postData.TITLE);

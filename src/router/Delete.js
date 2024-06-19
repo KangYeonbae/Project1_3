@@ -1,12 +1,18 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import axios from 'axios';
 import { Button } from '@mui/material';
+import {AuthContext} from "./AuthContext";
 
 function DeletePost({ postId, onDelete }) {
+    const { user } = useContext(AuthContext);
     const handleDelete = async () => {
+        const token = localStorage.getItem('token')
         try {
             const response = await axios.delete(`http://localhost:3001/posts/${postId}`, {
-                withCredentials: true
+                withCredentials: true,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
             if (response.status === 200) {
                 alert('게시글이 성공적으로 삭제되었습니다.');

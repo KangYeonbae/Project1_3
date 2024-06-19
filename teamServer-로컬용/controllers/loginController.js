@@ -54,7 +54,7 @@ const login = async (req, res) => {
         console.log('Session user:', req.session.user);
 
         // JWT 토큰 생성
-        const token = jwtUtils.generateToken({ userid: user.USERID });
+        const token = jwtUtils.generateToken(req.session.user);
         console.log('Token generated:', token);
 
         res.json({

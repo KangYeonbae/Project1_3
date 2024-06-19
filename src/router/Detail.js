@@ -1,20 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import DeletePost from './Delete';
 import { Container, Typography, Button, Box } from '@mui/material';
+import {AuthContext} from "./AuthContext";
 // import '../css/DetailPost.css';
 
-function DetailPost({ user }) {
+function DetailPost() {
+    const { user } = useContext(AuthContext);
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const token = localStorage.getItem('token')
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/posts/${id}`);
+                const response = await axios.get(`http://localhost:3001/posts/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 setPost(response.data);
             } catch (error) {
                 console.error('Failed to fetch post:', error);
