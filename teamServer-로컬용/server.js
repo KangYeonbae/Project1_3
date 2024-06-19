@@ -9,12 +9,13 @@ const path = require('path');
 const fs = require('fs');
 const {autoCommit} = require("oracledb");
 const authRoutes = require('./routes/authRoutes');
-require('../dotevn').config();
+const authMiddleware = require('./middleware/authMiddleware');
+require('dotenv').config();
 
 oracledb.autoCommit = true;
 
 try {
-    oracledb.initOracleClient({ libDir: 'D:\\instantclient_21_14' }); // 새로 다운 받아야함
+    oracledb.initOracleClient({ libDir: 'D:\\instantclient_21_14' });
     oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
     oracledb.fetchAsString = [oracledb.CLOB];
     console.log('Oracle Instant Client 초기화 성공');
@@ -28,27 +29,32 @@ const app = express();
 const port = 3001;
 
 
+// Middleware
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
 
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-
-
+// 세션 설정
 app.use(session({
-    secret: 'mySecretKey',
+    secret: 'your-secret-key', // 세션 암호화 키
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: false,
+        secure: false, // HTTPS를 사용하는 경우 true로 설정
         httpOnly: true,
-        maxAge: 1000 * 60 * 60
     }
 }));
+
+
+// Verify token endpoint
+app.post('/verify-token', authMiddleware, (req, res) => {
+    res.json({ user: req.user });
+});
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -113,8 +119,8 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 //     }
 // }
 
-app.post('/purchase', async (req, res) => {
-    const userId = req.session.userId;
+app.post('/purchase', authMiddleware, async (req, res) => {
+    const userId = req.user.userid;
     const { productId, price } = req.body;
 
     console.log('Purchasing product:', { userId, productId, price });
@@ -166,8 +172,8 @@ app.post('/purchase', async (req, res) => {
     }
 });
 
-app.post('/posts', upload.single('image'), async (req, res) => {
-    const userId = req.session.userId;
+app.post('/posts', upload.single('image'), authMiddleware, async (req, res) => {
+    const userId = req.user.userid;
     const { title, content } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
@@ -211,8 +217,8 @@ async function clobToString(clob) {
         });
     });
 }
-app.get('/mypage', async (req, res) => {
-    const userId = req.session.userId;
+app.get('/mypage', authMiddleware, async (req, res) => {
+    const userId = req.user.userid;
 
     if (!userId) {
         return res.status(401).send('로그인이 필요합니다.');
@@ -242,8 +248,9 @@ app.get('/mypage', async (req, res) => {
         }
     }
 });
-app.post('/mileage/use', async (req, res) => {
-    const userId = req.session.userId;
+
+app.post('/mileage/use', authMiddleware, async (req, res) => {
+    const userId =  req.user.userid;
     const { amount } = req.body;
 
     if (!userId) {
@@ -302,7 +309,7 @@ app.post('/mileage/use', async (req, res) => {
 
 
 
-app.get('/posts', async (req, res) => {
+app.get('/posts', authMiddleware, async (req, res) => {
     let connection;
     try {
         connection = await oracledb.getConnection(dbConfig);
@@ -331,7 +338,7 @@ app.get('/posts', async (req, res) => {
 });
 
 
-app.get('/posts/:id', async (req, res) => {
+app.get('/posts/:id', authMiddleware,  async (req, res) => {
     const postId = req.params.id;
     let connection;
     try {
@@ -358,9 +365,9 @@ app.get('/posts/:id', async (req, res) => {
 });
 
 // 게시글 삭제
-app.delete('/posts/:id', async (req, res) => {
+app.delete('/posts/:id', authMiddleware,  async (req, res) => {
     const postId = req.params.id;
-    const userId = req.session.userId;
+    const userId =  req.user.userid;
 
     if (!userId) {
         return res.status(401).send('로그인이 필요합니다.');
@@ -386,8 +393,8 @@ app.delete('/posts/:id', async (req, res) => {
 });
 
 // 게시글 수정
-app.put('/posts/:id', upload.single('image'), async (req, res) => {
-    const userId = req.session.userId;
+app.put('/posts/:id', upload.single('image'), authMiddleware, async (req, res) => {
+    const userId =  req.user.userid;
     const postId = req.params.id;
     const { title, content } = req.body;
     const imagePath = req.file ? `/uploads/${req.file.filename}` : null;

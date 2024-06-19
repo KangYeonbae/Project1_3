@@ -113,7 +113,6 @@ function App() {
     };
 
     return (
-        <AuthProvider>
             <div className="App">
                 {loading ? (
                     <div className="loading-container">
@@ -146,7 +145,9 @@ function App() {
                                         <div className="user-btn">
                                             {isAuthenticated ? (
                                                 <div className="login-btn">
-                                                    <button className="dropdown-btn" onClick={toggleDropdown}>{user?.nickname} ▼</button>
+                                                    <button className="dropdown-btn" onClick={toggleDropdown}>
+                                                        {user?.nickname || 'No Nickname'} ▼
+                                                    </button>
                                                     {isDropdownOpen && (
                                                         <div className="dropdown-content">
                                                             <NavLink className="nav-link" to="/mypage">마이페이지</NavLink>
@@ -157,7 +158,6 @@ function App() {
                                             ) : (
                                                 <button onClick={openModal}>로그인</button>
                                             )}
-                                            <LoginModal isOpen={isModalOpen} onClose={closeModal} />
                                         </div>
                                     </Nav>
                                 </Navbar.Collapse>
@@ -169,9 +169,10 @@ function App() {
                             {chatbot && <Chatbot closeChat={() => setChatbot(false)} />}
                         </div>
 
-                        <Routes>
+                    <Routes>
                             <Route path="/" element={
                                 <div>
+                                    <LoginModal isOpen={isModalOpen} onClose={closeModal} />
                                     <article id="main-con" className="center-style">
                                         <section className='box'>
                                             <div className="back-img"></div>
@@ -286,24 +287,23 @@ function App() {
                                 </div>
                             } />
                             <Route path="/MyMap" element={<MyMap />} />
-                            <Route path="/login" element={<LoginModal setLoginStatus={setIsModalOpen} setLoginUser={isAuthenticated} />} />
+                            <Route path="/login" element={<LoginModal setLoginStatus={setIsModalOpen} />} />
                             <Route path="Info" element={<Info />} />
                             <Route path="/edust" element={<AutoSwitchingViewer />} />
                             <Route path="/search" element={<Search_location />} />
                             <Route path="/car" element={<Search_location_car />} />
                             <Route path="/board/:category" element={<Category />} />
-                            <Route path="/mypage" element={<Mypage user={isAuthenticated} setLoginUser={isAuthenticated} setLoginStatus={isAuthenticated} userInfo={userInfo} setUserInfo={setUserInfo} />} />
+                            <Route path="/mypage" element={<Mypage user={user} />} />
                             <Route path="/shop" element={<Products setUserInfo={setUserInfo} />} />
-                            <Route path="/posts" element={<Posts user={isAuthenticated} />} />
+                            <Route path="/posts" element={<Posts user={user} />} />
                             <Route path="/create" element={<CreatePost />} />
-                            <Route path="/edit/:id" element={<EditPost user={isAuthenticated} />} />
-                            <Route path="/posts/:id" element={<DetailPost user={isAuthenticated} />} />
+                            <Route path="/edit/:id" element={<EditPost user={user} />} />
+                            <Route path="/posts/:id" element={<DetailPost user={user} />} />
                             <Route path="/register" element={<Register/>}/>
                         </Routes>
                     </div>
                 )}
             </div>
-        </AuthProvider>
     );
 }
 

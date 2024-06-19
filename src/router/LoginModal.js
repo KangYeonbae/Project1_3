@@ -20,7 +20,7 @@ const LoginModal = ({ isOpen, onClose }) => {
             await authService.register(formData);
             await login(formData.userid, formData.password);
         }
-        onClose();
+        onClose(); // 로그인 성공 후 모달 닫기
     };
 
     return isOpen ? (

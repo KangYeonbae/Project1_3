@@ -24,12 +24,13 @@ function Mypage({ user, setLoginUser, setLoginStatus }) {
 
             try {
                 const response = await axios.get('http://localhost:3001/mypage', { withCredentials: true });
+                console.log("my page :", response.data);
                 setUserInfo({
                     nickname: response.data.NICKNAME,
                     realname: response.data.REALNAME,
                     mileage: response.data.MILEAGE
                 });
-                console.log(response.data);
+
             } catch (error) {
                 console.error('Failed to fetch user info:', error.response ? error.response.data : error.message);
             }

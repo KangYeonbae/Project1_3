@@ -6,16 +6,19 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null); // 사용자 정보 상태 추가
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            // 사용자 정보를 로드하는 로직 추가 (예: authService.getUser)
-            authService.getUser().then(userData => {
-                setUser(userData);
+            authService.verifyToken(token).then(response => {
                 setIsAuthenticated(true);
+                setUser(response.user);
+            }).catch(() => {
+                localStorage.removeItem('token');
+                setIsAuthenticated(false);
+                setUser(null);
             });
         }
     }, []);
@@ -23,11 +26,10 @@ const AuthProvider = ({ children }) => {
     const login = async (userid, password) => {
         try {
             const response = await authService.login(userid, password);
-            if (response.token) {
+            if (response.token && response.user) {
                 localStorage.setItem('token', response.token);
-                setIsAuthenticated(true);
-                // 사용자 정보 설정
                 setUser(response.user);
+                setIsAuthenticated(true);
                 navigate('/');
             } else {
                 console.error('Token not found in response');
@@ -40,7 +42,7 @@ const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
-        setUser(null); // 사용자 정보 초기화
+        setUser(null);
         navigate('/');
     };
 

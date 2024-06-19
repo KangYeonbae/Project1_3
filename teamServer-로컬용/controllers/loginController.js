@@ -11,10 +11,9 @@ const login = async (req, res) => {
         connection = await oracledb.getConnection(dbConfig);
         console.log('Database connection established for login');
 
-        // 바인드 변수에 실제 userid 값을 설정
         const bindVars = {
             userid: {
-                val: userid, // 'userid' 대신 변수 userid의 실제 값 사용
+                val: userid,
                 dir: oracledb.BIND_IN,
                 type: oracledb.DB_TYPE_VARCHAR,
                 maxSize: 1000
@@ -22,7 +21,7 @@ const login = async (req, res) => {
         };
 
         const result = await connection.execute(
-            `SELECT USERID, PASSWORD FROM USERS WHERE USERID = :userid`,
+            `SELECT * FROM USERS WHERE USERID = :userid`,
             bindVars
         );
 
@@ -36,12 +35,7 @@ const login = async (req, res) => {
         const user = result.rows[0];
         console.log('User found:', user);
 
-        // 각 컬럼에 대한 정보 출력 (디버깅용)
-        console.log('USERID:', user[0]);
-        console.log('PASSWORD:', user[1]);
-
-        // 암호화된 비밀번호와 비교
-        const isPasswordValid = await bcrypt.compare(password, user[1]);
+        const isPasswordValid = await bcrypt.compare(password, user.PASSWORD);
         console.log('Password valid:', isPasswordValid);
 
         if (!isPasswordValid) {
@@ -49,11 +43,24 @@ const login = async (req, res) => {
             return res.status(401).send('Invalid credentials');
         }
 
+        // 세션에 사용자 정보 저장
+        req.session.user = {
+            id: user.ID,
+            userid: user.USERID,
+            nickname: user.NICKNAME,
+            realname: user.REALNAME,
+            mileage: user.MILEAGE
+        };
+        console.log('Session user:', req.session.user);
+
         // JWT 토큰 생성
-        const token = jwtUtils.generateToken({ userid: user[0] });
+        const token = jwtUtils.generateToken({ userid: user.USERID });
         console.log('Token generated:', token);
 
-        res.json({ token });
+        res.json({
+            token: token,
+            user: req.session.user
+        });
     } catch (err) {
         console.error('Error connecting to the database for login:', err.message);
         res.status(500).send('Error logging in');
