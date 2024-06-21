@@ -1,33 +1,52 @@
-import React, { useContext, useState } from 'react';
-import { Container, Grid, Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
+import React, {useContext, useState} from 'react';
+import { Grid, Card, CardMedia, CardContent, Typography, Button, Box } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import '../css/products.css';
-import { AuthContext } from "./AuthContext";
+import {AuthContext} from "./AuthContext";
+import Footer from "./Footer";
 
-const products = [
+export const products = [
     {
         id: 1,
         name: 'Zero Waste Product 1',
         price: 10000,
-        image: '/img/zeroshop1.jpg'
+        image: '/img/liubov-ilchuk-x_ujfGcrAyU-unsplash.jpg'
     },
     {
         id: 2,
         name: 'Zero Waste Product 2',
         price: 20000,
-        image: '/img/zeroshop2.jpg'
+        image: '/img/logan-weaver-lgnwvr-fuCwB8kXv58-unsplash.jpg'
     },
     {
         id: 3,
         name: 'Zero Waste Product 3',
         price: 30000,
-        image: '/img/zeroshop3.jpg'
-    }
+        image: '/img/micheile-henderson-a9BY65__Cas-unsplash.jpg'
+    },
+    {
+        id: 4,
+        name: 'Zero Waste Product 4',
+        price: 30000,
+        image: '/img/micheile-henderson-BTMxNIwVBvU-unsplash.jpg'
+    },
+    {
+        id: 5,
+        name: 'Zero Waste Product 5',
+        price: 30000,
+        image: '/img/micheile-henderson-wwTvwS9vKZs-unsplash.jpg'
+    },
+    {
+        id: 6,
+        name: 'Zero Waste Product 6',
+        price: 30000,
+        image: '/img/toa-heftiba-UrgpmTHMd_Y-unsplash.jpg'
+    },
 ];
 
 function Products() {
-    const { user } = useContext(AuthContext); // AuthContext에서 user 가져오기
+    const {user} = useContext(AuthContext);
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState({
         nickname: '',
@@ -36,7 +55,7 @@ function Products() {
     });
 
     const handlePurchase = async (product) => {
-        const token = localStorage.getItem('token'); // 토큰 가져오기
+        const token = localStorage.getItem('token');
         if (!token) {
             alert('로그인이 필요합니다.');
             navigate('/login');
@@ -80,35 +99,47 @@ function Products() {
     return (
         <>
             <div className="P_header_box"></div>
-            <Container>
-                <Typography variant="h4" gutterBottom>
-                    Zero Waste Shop
-                </Typography>
-                <Grid container spacing={4}>
-                    {products.map((product) => (
-                        <Grid item key={product.id} xs={12} sm={6} md={4}>
-                            <Card>
-                                <CardMedia
-                                    component="img"
-                                    image={product.image}
-                                    alt={product.name}
-                                />
-                                <CardContent>
-                                    <Typography variant="h5">
-                                        {product.name}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        Price: {product.price} KRW
-                                    </Typography>
-                                    <Button variant="contained" color="primary" onClick={() => handlePurchase(product)}>
-                                        구매
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Container>
+            <div className="products-con">
+                <div className="product-header">
+                    <h1>제로웨이스트 제품</h1>
+                </div>
+                <ul>
+                    <li>#제로웨이스트</li>
+                    <li>#친환경제품</li>
+                    <li>#좋은제품</li>
+                </ul>
+                <div className="products">
+                    <Grid container spacing={4}>
+                        {products.map((product) => (
+                            <Grid item key={product.id} xs={12} sm={6} md={4}>
+                                <Card>
+                                    <Box sx={{ height: '500px', overflow: 'hidden' }}>
+                                        <CardMedia
+                                            component="img"
+                                            image={product.image}
+                                            alt={product.name}
+                                        />
+                                    </Box>
+                                    <CardContent>
+                                        <Typography variant="h5">
+                                            {product.name}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary">
+                                            Price: {product.price} KRW
+                                        </Typography>
+                                        <Button variant="contained" color="primary" onClick={() => handlePurchase(product)}>
+                                            구매
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </div>
+            </div>
+            <Routes>
+                <Route path="/" element={< Footer/>}></Route>
+            </Routes>
         </>
     );
 }

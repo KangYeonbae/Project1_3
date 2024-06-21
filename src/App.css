@@ -62,6 +62,7 @@ Nav a { color: #fff !important; }
 .our-intro p {
   padding: 0;
   margin: 0;
+  opacity: 0;
   animation: intro-p 2s forwards;
   animation-delay: .5s;
 }
@@ -70,10 +71,7 @@ Nav a { color: #fff !important; }
   to { opacity: 1; }
 }
 @keyframes intro-p {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
+  from { transform: translateX(-20px); }
   to {
     opacity: 1;
     transform: translateX(0);
@@ -91,17 +89,17 @@ Nav a { color: #fff !important; }
   position: relative;
   width: 100%;
   height: 810px;
-  background: url("assets/img/ocg-saving-the-ocean-unsplash.jpg") no-repeat center 20%;
+  background: url("/public/img/ocg-saving-the-ocean-unsplash.jpg") no-repeat center 20%;
   background-size: cover;
-  mask-image:
-          linear-gradient(to top, transparent, black 20%),
-          linear-gradient(to left, transparent, black 30%),
-          linear-gradient(to right, transparent, black 30%);
+  mask-image: linear-gradient(to top, transparent, black 20%),
+  linear-gradient(to left, transparent, black 30%),
+  linear-gradient(to right, transparent, black 30%);
   mask-composite: intersect;
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
   animation: left-in 1.5s forwards;
 }
+
 @keyframes left-in {
   from {
     transform: translateX(-20px);
@@ -112,6 +110,7 @@ Nav a { color: #fff !important; }
     opacity: 0.8;
   }
 }
+
 
 /* wave style */
 .wave-con, .wave { position: absolute; }
@@ -237,9 +236,15 @@ Nav a { color: #fff !important; }
 #intro-section {
   width: 100vw;
   height: 100%;
+  /*opacity: 0;*/
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
   padding-top: 10em;
   background: #f8f9fa;
   position: relative;
+}
+#intro-section.visible {
+  /*opacity: 1;*/
+  transform: translateY(0);
 }
 #intro-section > h2 {
   font-size: 3.5em;
@@ -255,9 +260,8 @@ Nav a { color: #fff !important; }
 #erehub-mark {
   width: 100vw;
   padding: 5em 0;
-  background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .3)), url("./assets/img/noah-buscher-x8ZStukS2PM-unsplash.jpg") fixed center 20%;
+  background: linear-gradient(rgba(0, 0, 0, .3), rgba(0, 0, 0, .3)), url("/public/img/noah-buscher-x8ZStukS2PM-unsplash.jpg") fixed center 20%;
   background-size: cover;
-  /*backdrop-filter: blur(30px);*/
   color: #fff;
 }
 .mark-info {
@@ -297,32 +301,51 @@ Nav a { color: #fff !important; }
   padding: 10px;
   border-radius: 10px;
   transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+.login-btn button {}
 
 /* 드롭다운 버튼 */
-.dropdown-btn {
-  cursor: pointer;
+.dropdown-btn {}
+.user-btn button {
   border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  text-decoration: none;
-  position: relative;
-  margin-right: 10px;
+  color: #fff;
+  font-size: 16px;
+  background: transparent;
 }
 
 /* 드롭다운 내용 */
 .dropdown-content {
-  display: none; /* 기본적으로 숨김 처리 */
+  visibility: hidden; /* 기본적으로 숨김 처리 */
   position: absolute;
-  width: 100px;
+  top: 30px;
+  width: 120px;
   z-index: 1;
-  border-radius: 10px;
+  border-radius: 5px;
+  background: #fff;
+  opacity: 0;
+  transform: translateY(0);
+  transition: transform 0.3s linear, opacity 0.3s linear, visibility 0.3s linear;
+  overflow: hidden;
 }
-
 /* 드롭다운 버튼과 내용 호버 시 드롭다운 내용 보여주기 */
 .dropdown-btn:hover + .dropdown-content,
 .dropdown-content:hover {
-  display: block; /* 마우스 오버시 표시 */
+  visibility: visible; /* 마우스 오버시 표시 */
+  opacity: 1;
+  transform: translateY(30px);
+}
+.dropdown-content .nav-link {
+  width: 100%;
+  color: #212529 !important;
+  text-align: center;
+  transition: 0.3s linear;
+}
+.dropdown-content .nav-link:hover {
+  background: #4CAF50;
+  color: #fff !important;
 }
 
 

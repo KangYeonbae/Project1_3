@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
 import axios from 'axios';
-import { Button } from '@mui/material';
 import {AuthContext} from "./AuthContext";
 
 function DeletePost({ postId, onDelete }) {
@@ -25,9 +24,9 @@ function DeletePost({ postId, onDelete }) {
     };
 
     return (
-        <Button variant="contained" color="secondary" onClick={handleDelete}>
+        <button onClick={handleDelete}>
             삭제
-        </Button>
+        </button>
     );
 }
 

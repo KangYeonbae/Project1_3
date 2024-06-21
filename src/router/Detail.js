@@ -1,27 +1,31 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import DeletePost from './Delete';
-import { Container, Typography, Button, Box } from '@mui/material';
-import {AuthContext} from "./AuthContext";
-// import '../css/DetailPost.css';
+import { Button } from '@mui/material';
+import { AuthContext } from "./AuthContext";
+import '../css/DetailPost.css';
+import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 
 function DetailPost() {
     const { user } = useContext(AuthContext);
-    const { id } = useParams();
+    const { postId } = useParams(); // useParams 훅을 사용하여 postId를 가져옴
     const [post, setPost] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
+        console.log("postId:", postId); // postId 확인을 위한 콘솔 로그
+        const token = localStorage.getItem('token');
+        console.log("Token:", token); // 토큰 확인
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/posts/${id}`, {
+                const response = await axios.get(`http://localhost:3001/posts/${postId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                console.log("Response:", response); // 응답 확인
                 setPost(response.data);
             } catch (error) {
                 console.error('Failed to fetch post:', error);
@@ -29,8 +33,12 @@ function DetailPost() {
             }
         };
 
-        fetchPost();
-    }, [id]);
+        if (postId) {
+            fetchPost();
+        } else {
+            setError(new Error('Post ID is undefined'));
+        }
+    }, [postId]);
 
     if (error) {
         return <div>Failed to fetch post: {error.message}</div>;
@@ -42,35 +50,45 @@ function DetailPost() {
 
     const imageUrl = post.IMAGE_PATH ? `http://localhost:3001${post.IMAGE_PATH}` : null;
 
-    // 디버깅용 콘솔 로그
-    console.log("User ID:", user ? user.id : "No User");
-    console.log("Post Author ID:", post.AUTHOR_ID);
-
     const handleEdit = () => {
         navigate(`/edit/${post.ID}`);
     };
 
     return (
         <>
-        <div className="header_box"></div>
-        <Container className="detail-post-container">
-            <Typography variant="h4" gutterBottom className="detail-post-title">
-                {post.TITLE}
-            </Typography>
-            <Typography variant="body1" paragraph className="detail-post-content">
-                {post.CONTENT}
-            </Typography>
-            {imageUrl && <img src={imageUrl} alt="Post" className="detail-post-image" />}
-            {user && user.id === post.AUTHOR_ID && ( // 로그인한 유저의 ID와 작성자의 ID가 일치할 경우에만 버튼 활성화
-                <Box mt={2} className="detail-post-buttons">
-                    <Button variant="contained" color="primary" onClick={handleEdit} style={{ marginRight: '10px' }}>
-                        수정
-                    </Button>
-                    <DeletePost postId={post.ID} onDelete={() => navigate('/posts')} />
-                </Box>
-            )}
-        </Container>
-            </>
+            <div className="header_box"></div>
+            <div className="detail-post-container">
+                <div className="detail-head">
+                    <h5 className="detail-post-title">{post.TITLE}</h5>
+                    <div className="detail-posts">
+                        {user && user.id === post.AUTHOR_ID && (
+                            <div className="detail-post-buttons">
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleEdit}
+                                    startIcon={<FaPencilAlt />}
+                                    style={{ marginRight: '10px' }}
+                                >
+                                    수정
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    startIcon={<FaTrashAlt />}
+                                >
+                                    <DeletePost postId={post.ID} onDelete={() => navigate('/posts')} />
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="detail-post-content">
+                    {post.CONTENT}
+                    {imageUrl && <img src={imageUrl} alt="Post" className="detail-post-image" />}
+                </div>
+            </div>
+        </>
     );
 }
 
