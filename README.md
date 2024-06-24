@@ -354,6 +354,12 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
 + 회원가입 추가예정
 + 버스길찾기에서 현위치~클릭위치까지의 버스노선만 나오게 수정예정
 
+#### 4차 프로젝트 개선 사항
++ 유저 위치기반 4km 이내 가까운 가게(제로웨이스트샵, 페트병수거함, 재활용센터) 추천 로직 구현
+  ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/46b49aa7-26b2-47d1-82b6-a6ec3d465f68)
+  (현재 제로웨이스트샵, 페트병 수거함 구현 완료)
+
+
 - - -
 ## API
 Open Weather(https://openweathermap.org/)  
