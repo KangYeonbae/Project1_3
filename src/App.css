@@ -247,8 +247,6 @@ Nav a { color: #fff !important; }
 }
 #intro-section {
   width: 100vw;
-  height: 100%;
-  /*opacity: 0;*/
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
   padding-top: 10em;
   background: #f8f9fa;

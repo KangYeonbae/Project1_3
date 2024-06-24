@@ -1,15 +1,15 @@
 .swiper {
-    width: 400px;
-    height: 600px;
+    width: 100%;
+    /*height: 600px;*/
     padding: 30px;
+    text-align: left;
 }
-.swiper-wrapper {
-}
+.swiper-wrapper {}
 .swiper-slide {
-    background: #178844;
+    /*background: #178844;*/
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column !important;
     padding: 20px;
 }
-.swiper-slide

@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import '../css/style.css';
+import '../css/SwiperSlider.css'
 
 import EmissionsChart15 from './Chart_Emissions15';
 import EmissionsChart20 from './Chart_Emissions20';
@@ -10,8 +11,6 @@ import RecycleChart15 from './Chart_Recycling15';
 import RecycleChart20 from './Chart_Recycling20';
 import RecycleDetailsChart15 from './Chart_RecyclingDetails15';
 import RecycleDetailsChart20 from './Chart_RecyclingDetails20';
-
-import { Pagination } from 'swiper/modules';
 
 const SwiperSlider = ({ serverData15, serverData20 }) => {
     return (
@@ -33,9 +32,6 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>2015~2019</h6>
                     <h2>전국 쓰레기</h2><h2>배출량</h2>
                     <p>2015년 ~ 2019년도 전국 쓰레기 배출양입니다.</p>
-                    {/*<div className="map-btn">*/}
-                    {/*    <span>바로가기</span>*/}
-                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -46,9 +42,6 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>2020~2022</h6>
                     <h2>전국 쓰레기</h2><h2>배출량</h2>
                     <p>2020년 ~ 2022년도 전국 쓰레기 배출양입니다.</p>
-                    {/*<div className="map-btn">*/}
-                    {/*    <span>바로가기</span>*/}
-                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -59,9 +52,6 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>2015~2019</h6>
                     <h2>전국 재활용</h2><h2>처리 현황</h2>
                     <p>2015년 ~ 2019년도 전국 재활용 처리현황입니다.</p>
-                    {/*<div className="map-btn">*/}
-                    {/*    <span>바로가기</span>*/}
-                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -72,9 +62,6 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>2020~2022</h6>
                     <h2>전국 재활용</h2><h2>처리 현황</h2>
                     <p>2020년 ~ 2022년도 전국 재활용 처리현황입니다.</p>
-                    {/*<div className="map-btn">*/}
-                    {/*    <span>바로가기</span>*/}
-                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -85,9 +72,6 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>상세 재활용 현황</h6>
                     <h2>재활용 품목을 </h2><h2>쉽게!</h2>
                     <p>재활용 품목별 현황을 쉽게 확인할 수 있습니다.</p>
-                    {/*<div className="map-btn">*/}
-                    {/*    <span>바로가기</span>*/}
-                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -98,9 +82,6 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>상세 재활용 현황</h6>
                     <h2>재활용 품목을 </h2><h2>쉽게!</h2>
                     <p>재활용 품목별 현황을 쉽게 확인할 수 있습니다.</p>
-                    {/*<div className="map-btn">*/}
-                    {/*    /!*<span>바로가기</span>*!/*/}
-                    {/*</div>*/}
                 </div>
             </SwiperSlide>
         </Swiper>
