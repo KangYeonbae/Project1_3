@@ -335,6 +335,8 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
 - - -
 + 로그인,마이페이지 구현
   + oracle SQL 과 연결하여, 리액트로 로그인,마이페이지 구현.
+    ![Uploading image.png…]()  
+
      ![image](https://github.com/LEEJIWOOE/project4/assets/153358246/fa7d63a0-8bbc-4afa-9598-47bc741098cc)
      ![image](https://github.com/LEEJIWOOE/project4/assets/153358246/fb0e67c4-6be5-4a5b-864d-e1a605c7054c)
     
