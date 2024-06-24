@@ -20,10 +20,10 @@ function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:4000/register', form)
+        axios.post('http://localhost:3001/register', form)
             .then(response => {
                 alert('Registration successful!');
-                return axios.post('http://localhost:4000/login', { userid: form.userid, password: form.password });
+                return axios.post('http://localhost:3001/login', { userid: form.userid, password: form.password });
             })
             .then(response => {
                 const token = response.data.token;

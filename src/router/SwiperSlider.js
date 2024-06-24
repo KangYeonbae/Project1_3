@@ -30,12 +30,12 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <EmissionsChart15 data={serverData15} />
                 </div>
                 <div className="slide-txt">
-                    <h6>그림으로 만나는 분리수거</h6>
-                    <h2>분리수거를 </h2><h2>쉽게!</h2>
-                    <p>그림으로 쉽게 분리수거방법을 볼 수 있습니다. 누구나 쉽게 따라할 수 있는 분리수거입니다.</p>
-                    <div className="map-btn">
-                        <span>바로가기</span>
-                    </div>
+                    <h6>2015~2019</h6>
+                    <h2>전국 쓰레기</h2><h2>배출량</h2>
+                    <p>2015년 ~ 2019년도 전국 쓰레기 배출양입니다.</p>
+                    {/*<div className="map-btn">*/}
+                    {/*    <span>바로가기</span>*/}
+                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -43,12 +43,12 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <EmissionsChart20 data={serverData20} />
                 </div>
                 <div className="slide-txt">
-                    <h6>내 위치기반 정보제공 서비스</h6>
-                    <h2>집 근처 환경관련 서비스를 한눈에</h2>
-                    <p>현재 당신의 위치를 기반으로 각종 편의시설의 위치부터 최단거리 길찾기 서비스를 제공합니다.</p>
-                    <div className="map-btn">
-                        <span>바로가기</span>
-                    </div>
+                    <h6>2020~2022</h6>
+                    <h2>전국 쓰레기</h2><h2>배출량</h2>
+                    <p>2020년 ~ 2022년도 전국 쓰레기 배출양입니다.</p>
+                    {/*<div className="map-btn">*/}
+                    {/*    <span>바로가기</span>*/}
+                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -56,12 +56,12 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <RecycleChart15 data={serverData15} />
                 </div>
                 <div className="slide-txt">
-                    <h6>재활용 현황</h6>
-                    <h2>재활용을 </h2><h2>쉽게!</h2>
-                    <p>재활용 현황을 쉽게 확인할 수 있습니다.</p>
-                    <div className="map-btn">
-                        <span>바로가기</span>
-                    </div>
+                    <h6>2015~2019</h6>
+                    <h2>전국 재활용</h2><h2>처리 현황</h2>
+                    <p>2015년 ~ 2019년도 전국 재활용 처리현황입니다.</p>
+                    {/*<div className="map-btn">*/}
+                    {/*    <span>바로가기</span>*/}
+                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -69,12 +69,12 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <RecycleChart20 data={serverData20} />
                 </div>
                 <div className="slide-txt">
-                    <h6>재활용 현황</h6>
-                    <h2>재활용을 </h2><h2>쉽게!</h2>
-                    <p>재활용 현황을 쉽게 확인할 수 있습니다.</p>
-                    <div className="map-btn">
-                        <span>바로가기</span>
-                    </div>
+                    <h6>2020~2022</h6>
+                    <h2>전국 재활용</h2><h2>처리 현황</h2>
+                    <p>2020년 ~ 2022년도 전국 재활용 처리현황입니다.</p>
+                    {/*<div className="map-btn">*/}
+                    {/*    <span>바로가기</span>*/}
+                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>
@@ -85,9 +85,9 @@ const SwiperSlider = ({ serverData15, serverData20 }) => {
                     <h6>상세 재활용 현황</h6>
                     <h2>재활용 품목을 </h2><h2>쉽게!</h2>
                     <p>재활용 품목별 현황을 쉽게 확인할 수 있습니다.</p>
-                    <div className="map-btn">
-                        <span>바로가기</span>
-                    </div>
+                    {/*<div className="map-btn">*/}
+                    {/*    <span>바로가기</span>*/}
+                    {/*</div>*/}
                 </div>
             </SwiperSlide>
             <SwiperSlide>

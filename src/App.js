@@ -12,7 +12,6 @@ import AutoSwitchingViewer from "./router/edust";
 import Products from "./router/Products";
 import Posts from "./router/Posts";
 import CreatePost from "./router/Create";
-import CreatePostModal from "./router/CreatePostModal";
 import EditPost from "./router/Edit";
 import DetailPost from "./router/Detail";
 import Register from "./router/Register";
@@ -33,7 +32,6 @@ function App() {
     const navigate = useNavigate();
     const { isAuthenticated, user, logout } = useContext(AuthContext);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-    const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [serverData15, setServerData15] = useState([]);
     const [serverData20, setServerData20] = useState([]);
@@ -70,8 +68,6 @@ function App() {
 
     const openLoginModal = () => setIsLoginModalOpen(true);
     const closeLoginModal = () => setIsLoginModalOpen(false);
-    const openCreatePostModal = () => setIsCreatePostModalOpen(true);
-    const closeCreatePostModal = () => setIsCreatePostModalOpen(false);
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -128,7 +124,6 @@ function App() {
             </div>
 
             <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal}/>
-            <CreatePostModal open={isCreatePostModalOpen} handleClose={closeCreatePostModal}/>
 
             <Routes>
                 <Route path="/" element={
@@ -211,7 +206,7 @@ function App() {
                             </section>
 
                             <div id="intro-section">
-                                <h2>에리허브가 제공하는 서비스를 한눈에 확인 해보세요.</h2>
+                                <h2>지금 우리나라 쓰래기와 재활용의 지표! 그래프로 확인하세요</h2>
                                 <SwiperSlider serverData15={serverData15} serverData20={serverData20}/>
                             </div>
 

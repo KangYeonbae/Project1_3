@@ -8,7 +8,7 @@ import geopandas as gpd
 from route.routes import recommend_bp
 from route.images import images_bp
 from route.mise12random import mise12random_bp
-from route.images_uploade import image_uploade_bp
+from route.images_uploade import image_upload_bp
 import traceback
 import pandas as pd
 
@@ -22,7 +22,7 @@ access_key = 'y+MUXWRZdywDBDs64HplB3XAbAYdvxWcQ54m88FRrpMBgZAm1tcqkUc8xkXrtl4eRg
 app.register_blueprint(recommend_bp, url_prefix='/api')
 app.register_blueprint(images_bp, url_prefix='/images')
 app.register_blueprint(mise12random_bp, url_prefix='/mise12random')
-app.register_blueprint(image_uploade_bp, url_prefix='/img')
+app.register_blueprint(image_upload_bp, url_prefix='/img')  # 올바른 Blueprint 등록
 
 @app.route('/api/random-data')
 def random_data():

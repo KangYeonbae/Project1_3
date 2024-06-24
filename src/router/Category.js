@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';  // URL 매개변수 가져오기 위해 사용
-import { Modal, Button, Carousel, Form } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper/modules';
+
 import "../css/App_border.css";
 
 function Category() {
-    const { category } = useParams();  // URL 매개변수에서 카테고리 가져오기
+    const { category } = useParams();
     const [data, setData] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -36,12 +41,12 @@ function Category() {
     const handleSave = async () => {
         try {
             await axios.post(`http://localhost:3001/b_${category}/update`, {
-                ID: selectedItem.ID,
+                ID: selectedItem.id,
                 TITLE: newTitle,
             });
             setData((prevData) =>
                 prevData.map((item) =>
-                    item.ID === selectedItem.ID ? { ...item, TITLE: newTitle } : item
+                    item.id === selectedItem.id ? { ...item, title: newTitle } : item
                 )
             );
             handleEditClose();
@@ -64,72 +69,79 @@ function Category() {
     }, [category]);
 
     return (
-        <div className="container_border">
+        <>
             <div className="header_box"></div>
-            <div className="row">
-                {data.map((item, index) => (
-                    <Card key={index} item={item} onOpenModal={handleOpenModal} onEditModal={handleEditModal} />
-                ))}
-            </div>
+            <div className="container_border">
 
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{selectedItem && selectedItem.title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Carousel>
-                        {selectedItem && Object.keys(selectedItem).filter(key => key.startsWith('IMG')).map((key, index) => (
-                            selectedItem[key] && (
-                                <Carousel.Item key={index}>
-                                    <img
-                                        className="d-block w-100"
-                                        src={`data:image/png;base64,${selectedItem[key]}`}
-                                        alt={`${selectedItem.TITLE} ${index + 1}`}
+                <div className="row">
+                    {data.map((item, index) => (
+                        <Card key={index} item={item} onOpenModal={handleOpenModal} onEditModal={handleEditModal} />
+                    ))}
+                </div>
+
+                {showModal && (
+                    <div className="modal_overlay" onClick={handleCloseModal}>
+                        <div className="modal_content" onClick={(e) => e.stopPropagation()}>
+                            <span className="modal_close" onClick={handleCloseModal}>&times;</span>
+                            <h2>{selectedItem && selectedItem.title}</h2>
+                            <Swiper
+                                spaceBetween={50}
+                                slidesPerView={1}
+                                navigation
+                                pagination={{ clickable: true }}
+                                modules={[Navigation, Pagination]}
+                            >
+                                {selectedItem && Object.keys(selectedItem).filter(key => key.startsWith('IMG')).map((key, index) => (
+                                    selectedItem[key] && (
+                                        <SwiperSlide key={index}>
+                                            <img
+                                                className="carousel_image"
+                                                src={`data:image/png;base64,${selectedItem[key]}`}
+                                                alt={`${selectedItem.title} ${index + 1}`}
+                                                style={{ width: '500px', height: '500px' }}  // 이미지 크기 조정
+                                            />
+                                        </SwiperSlide>
+                                    )
+                                ))}
+                            </Swiper>
+                        </div>
+                    </div>
+                )}
+
+                {editModal && (
+                    <div className="modal_overlay" onClick={handleEditClose}>
+                        <div className="modal_content" onClick={(e) => e.stopPropagation()}>
+                            <span className="modal_close" onClick={handleEditClose}>&times;</span>
+                            <h2>제목 수정</h2>
+                            <form>
+                                <div className="form_group">
+                                    <label htmlFor="formTitle">새로운 제목</label>
+                                    <input
+                                        type="text"
+                                        id="formTitle"
+                                        value={newTitle}
+                                        onChange={(e) => setNewTitle(e.target.value)}
                                     />
-                                </Carousel.Item>
-                            )
-                        ))}
-                    </Carousel>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={editModal} onHide={handleEditClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>제목 수정</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group controlId="formTitle">
-                            <Form.Label>새로운 제목</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={newTitle}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleEditClose}>Close</Button>
-                    <Button variant="primary" onClick={handleSave}>Save changes</Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
+                                </div>
+                            </form>
+                            <button onClick={handleEditClose}>닫기</button>
+                            <button onClick={handleSave}>변경 사항 저장</button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
     );
 }
 
 function Card({ item, onOpenModal, onEditModal }) {
     return (
         <div className="col-md-4 data_border">
-            <Button onClick={() => onOpenModal(item)} variant="link">
-                <img src={`data:image/png;base64,${item.IMG1}`} alt={item.TITLE} />
-            </Button>
-            <h5>{item.TITLE}</h5>
-            {/*<p>{item.description}</p>*/}
-            <Button variant="warning" onClick={() => onEditModal(item)}>Edit</Button>
+            <button onClick={() => onOpenModal(item)} className="link_button">
+                <img src={`data:image/png;base64,${item.IMG1}`} alt={item.title} style={{ width: '500px', height: '500px', margin:'0 auto' }} />
+            </button>
+            <h5>{item.title}</h5>
+            <button onClick={() => onEditModal(item)} className="edit_button">수정</button>
         </div>
     );
 }

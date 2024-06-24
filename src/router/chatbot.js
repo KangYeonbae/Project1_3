@@ -1,8 +1,9 @@
+import ReactDOM from 'react-dom';
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import {GoPaperAirplane} from "react-icons/go";
-import {IoClose} from "react-icons/io5";
-import {RiRobot2Line, RiRobot2Fill} from "react-icons/ri";
+import { GoPaperAirplane } from "react-icons/go";
+import { IoClose } from "react-icons/io5";
+import { RiRobot2Line, RiRobot2Fill } from "react-icons/ri";
 import "../css/ChatBot.css";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { FaPaperclip } from "react-icons/fa6";
@@ -15,6 +16,8 @@ function Chatbot(props) {
     const [uploadedImage, setUploadedImage] = useState(null);
     const [resultImageUrl, setResultImageUrl] = useState(null);
     const chatContainerRef = useRef(null);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // 데이터 불러오기 예시
     useEffect(() => {
@@ -92,7 +95,7 @@ function Chatbot(props) {
                         p.NAME.toLowerCase().replace(/\s/g, '').includes(userInput) ||
                         userInput.includes(p.NAME.toLowerCase().replace(/\s/g, "")));
                     if (napronInfo) {
-                        const {NAME, ADDRESS, INPUT_WASTES} = napronInfo
+                        const { NAME, ADDRESS, INPUT_WASTES } = napronInfo
                         responseMessage = `네프론관련정보입니다. \n위치: ${NAME}\n상세주소: ${ADDRESS}\n취급종류: ${INPUT_WASTES}`;
                         appendMessage('ChatBot', responseMessage);
                         if (isVoiceEnabled) {
@@ -129,21 +132,43 @@ function Chatbot(props) {
         const formData = new FormData();
         formData.append('file', file);
 
+        // FileReader를 사용하여 이미지 파일을 base64로 변환
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const userImage = reader.result;
+
+            // 이미지를 appendMessage 함수에서 추가
+            appendMessage('User', (
+                <div>
+                    <img src={userImage} alt="Uploaded" style={{ maxWidth: '200px' }} />
+                </div>
+            ));
+        };
+        reader.readAsDataURL(file);
+
         try {
-            const response = await axios.post('http://localhost:5000/img/imgupload', formData, {
+            const response = await axios.post('http://localhost:5000/img/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
 
-            const responseMessage = response.data.message;
-            appendMessage('ChatBot', responseMessage);
-
+            const responseMessage = response.data.text;
             const base64Image = response.data.image;
             const resultImageUrl = `data:image/jpeg;base64,${base64Image}`;
 
             setResultImageUrl(resultImageUrl);
-            appendMessage('ChatBot', <img src={resultImageUrl} alt="Result" style={{ maxWidth: '200px' }} />);
+
+            // ChatBot의 응답 메시지 추가
+            appendMessage('ChatBot', (
+                <div>
+                    <img src={resultImageUrl}
+                         alt="Result"
+                         style={{ maxWidth: '200px', cursor: 'pointer' }}
+                         onClick={() => setIsModalOpen(true)} />
+                    <p>{responseMessage} 입니다.</p>
+                </div>
+            ));
 
             if (isVoiceEnabled) {
                 speak(responseMessage);
@@ -154,9 +179,6 @@ function Chatbot(props) {
             appendMessage('ChatBot', '파일 업로드에 실패했습니다.');
         }
     };
-
-
-
 
     const triggerFileInput = () => {
         fileInputRef.current.click();
@@ -259,14 +281,14 @@ function Chatbot(props) {
         <div className="ChatbotIn">
             <div className="chatbot-header">
                 <span className="chat-icon">
-                    <RiRobot2Fill/>
+                    <RiRobot2Fill />
                 </span>
                 <div className="bot-info">
                     <h5>EReHubBot</h5>
                     <p>Visiters Supporter</p>
                 </div>
                 <button className="chat-close-btn">
-                    <IoClose onClick={props.closeChat}/>
+                    <IoClose onClick={props.closeChat} />
                 </button>
             </div>
             <div className="message-display-container" ref={chatContainerRef}>
@@ -293,19 +315,33 @@ function Chatbot(props) {
                     type="file"
                     accept="image/*"
                     ref={fileInputRef}
-                    style={{display: "none"}}
+                    style={{ display: "none" }}
                     onChange={handleFileUpload}
                 />
                 <button className="upload-button" onClick={triggerFileInput}>
-                    <FaPaperclip/>
+                    <FaPaperclip />
                 </button>
-                <button className="spend_button" onClick={() => sendMessage(userInput)}><GoPaperAirplane/></button>
+                <button className="spend_button" onClick={() => sendMessage(userInput)}><GoPaperAirplane /></button>
                 <button className="vioce_button" onClick={() => isListening ? stopListening() : startListening()}>
-                    {isListening ? <FaMicrophoneSlash/> : <FaMicrophone/>}
+                    {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
                 </button>
                 <button className="speak_button" onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}>
-                    {isVoiceEnabled ? <RiRobot2Line/> : <RiRobot2Fill/>}</button>
+                    {isVoiceEnabled ? <RiRobot2Line /> : <RiRobot2Fill />}</button>
             </div>
+            {isModalOpen && ReactDOM.createPortal(
+                <div className="chatbot-modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="chatbot-modal" onClick={(e) => e.stopPropagation()}>
+                        <span
+                            className="chatbot-modal-close-button"
+                            onClick={() => setIsModalOpen(false)}
+                        >
+                            &times;
+                        </span>
+                        <img src={resultImageUrl} alt="Result" style={{ maxWidth: '100%' }} />
+                    </div>
+                </div>,
+                document.body // 모달을 루트 요소에 렌더링
+            )}
         </div>
     );
 }

@@ -642,7 +642,7 @@ function MyMap() {
                 </div>
 
                 <div className="search-cate">
-                <button><FaBusAlt onClick={handlBusData}/></button>
+                    <button><FaBusAlt onClick={handlBusData}/></button>
                     <button><FaCar onClick={handleFetchData}/></button>
                     <button><FaPersonWalking/></button>
                     <button className="search-btn" onClick={handlBusData}>길찾기</button>
@@ -876,12 +876,12 @@ function MyMap() {
 
                 </Map>
                 <div className="Mymap-btn">
-                        <button onClick={toggleTraffic}>교통정보</button>
-                        <button onClick={toggleRoadView}>로드뷰</button>
-                        <button onClick={toggleUseDistrict}>지적편집도</button>
-                        <button onClick={handleFetchCityData}>서울지도</button>
-                        {/*<button onClick={handlBusData}>버스길찾기</button>*/}
-                        <button onClick={moveToCurrentLocation}>내 위치</button>
+                    <button onClick={toggleTraffic}>교통정보</button>
+                    <button onClick={toggleRoadView}>로드뷰</button>
+                    <button onClick={toggleUseDistrict}>지적편집도</button>
+                    <button onClick={handleFetchCityData}>서울지도</button>
+                    {/*<button onClick={handlBusData}>버스길찾기</button>*/}
+                    <button onClick={moveToCurrentLocation}>내 위치</button>
                 </div>
             </div>
         </div>

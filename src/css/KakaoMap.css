@@ -1,6 +1,6 @@
 .map_nav{
     height: 60px;
-    background-color: #178844;
+    background: linear-gradient(45deg, #3496fe, #178844 50%);
 }
 .location{
     margin: 20px auto;

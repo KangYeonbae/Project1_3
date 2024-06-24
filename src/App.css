@@ -1,9 +1,24 @@
+/* App.css */
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+html, body {
+  height: 100%;
+  overflow: auto; /* 스크롤을 가능하게 설정 */
+  margin: 0;
+  padding: 0;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 기존 스타일 유지 */
 body {
   overflow-x: hidden;
   position: relative;
-  font-family: "Noto Sans KR", sans-serif;
 }
+
+/* 나머지 스타일 유지 */
+
+/* 나머지 스타일 유지 */
 .center-style {
   display: flex;
   align-items: center;
@@ -24,7 +39,6 @@ body {
   margin: 0 auto;
   text-align: center;
 }
-
 
 /* nav style */
 Nav {
@@ -78,7 +92,6 @@ Nav a { color: #fff !important; }
   }
 }
 
-
 /* circle image style */
 .box {
   width: 100vw;
@@ -110,7 +123,6 @@ Nav a { color: #fff !important; }
     opacity: 0.8;
   }
 }
-
 
 /* wave style */
 .wave-con, .wave { position: absolute; }
@@ -292,7 +304,6 @@ Nav a { color: #fff !important; }
 
 /* foot style */
 
-
 /*-----------------------------------------------------------------------*/
 
 /* login btn & hover */
@@ -304,6 +315,7 @@ Nav a { color: #fff !important; }
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: -10px;
 }
 .login-btn button {}
 
@@ -314,6 +326,7 @@ Nav a { color: #fff !important; }
   color: #fff;
   font-size: 16px;
   background: transparent;
+  margin-top: 7px ;
 }
 
 /* 드롭다운 내용 */
@@ -330,6 +343,9 @@ Nav a { color: #fff !important; }
   transition: transform 0.3s linear, opacity 0.3s linear, visibility 0.3s linear;
   overflow: hidden;
 }
+/*.dropdown-btn{*/
+/*  margin-top: -7px;*/
+/*}*/
 /* 드롭다운 버튼과 내용 호버 시 드롭다운 내용 보여주기 */
 .dropdown-btn:hover + .dropdown-content,
 .dropdown-content:hover {
@@ -347,7 +363,6 @@ Nav a { color: #fff !important; }
   background: #4CAF50;
   color: #fff !important;
 }
-
 
 .Chatbot {
   width: 80px;

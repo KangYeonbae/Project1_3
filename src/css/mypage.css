@@ -1,7 +1,7 @@
 /* ---- 공통 스타일 ----*/
 .Mypage_header_box{
     height: 60px;
-    background: #178844;
+    background: linear-gradient(45deg, #3496fe, #178844 50%);
     width: 100%;
 }
 .Mypage, .mypage-con, .mypage-header, .mypage-head, .mypage-userinfo, .user {

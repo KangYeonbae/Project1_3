@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../css/edust.css';
+import "../css/AutoSwitchingViewer.css"
 
 const AutoSwitchingViewer = () => {
     const [day, setDay] = useState(1);
@@ -29,18 +29,29 @@ const AutoSwitchingViewer = () => {
     return (
         <>
             <div className="header_box"></div>
-        <div className="munji">
-            <iframe
-                ref={iframeRef}
-                title="Air Quality Map"
-                src={`http://localhost:5000/mise12random/api/map/${day}`}
-                style={{ height: "500px", width: "100%", visibility: "hidden" }}
-                onLoad={handleIframeLoad}
-            />
-            <div className="date-overlay">
-                {currentDateString}
+            <div className="munji">
+                <div className="date-overlay">
+                    <h2>{currentDateString}</h2>
+                </div>
+                <div className="iframe_box">
+                <iframe
+                    ref={iframeRef}
+                    title="Air Quality Map"
+                    src={`http://localhost:5000/mise12random/api/map/${day}`}
+                    style={{
+                        height: "700px",
+                        width: "70%",
+                        visibility: "hidden",
+                        margin: '10px 15%',
+                        textAlign: 'center',
+                        border: '#178844 2px solid',
+                        borderRadius: '20px',
+                        padding: '30px'
+                    }}
+                    onLoad={handleIframeLoad}
+                />
+                </div>
             </div>
-        </div>
         </>
     );
 };
