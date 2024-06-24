@@ -354,10 +354,24 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
 + 회원가입 추가예정
 + 버스길찾기에서 현위치~클릭위치까지의 버스노선만 나오게 수정예정
 
-#### 4차 프로젝트 개선 사항
-+ 유저 위치기반 4km 이내 가까운 가게(제로웨이스트샵, 페트병수거함, 재활용센터) 추천 로직 구현
-  ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/46b49aa7-26b2-47d1-82b6-a6ec3d465f68)
+#### 4차 프로젝트 이후 개선 사항
++ 유저 위치기반 4km 이내 가까운 가게(제로웨이스트샵, 페트병수거함, 재활용센터) 추천 로직 구현  
+  ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/46b49aa7-26b2-47d1-82b6-a6ec3d465f68)  
   (현재 제로웨이스트샵, 페트병 수거함 구현 완료)
+  ```
+  const query = `
+            SELECT ID, LATITUDE, LONGITUDE, NAME
+            FROM zero
+            WHERE (6371 * acos(
+                    cos(ROUND(CAST(LATITUDE AS NUMBER), 6) * (3.14159265358979323846 / 180)) *
+                    cos(ROUND(:user_lat, 6) * (3.14159265358979323846 / 180)) *
+                    cos((ROUND(:user_lon, 6) * (3.14159265358979323846 / 180)) -
+                        (ROUND(CAST(LONGITUDE AS NUMBER), 6) * (3.14159265358979323846 / 180))) +
+                    sin(ROUND(CAST(LATITUDE AS NUMBER), 6) * (3.14159265358979323846 / 180)) *
+                    sin(ROUND(:user_lat, 6) * (3.14159265358979323846 / 180))
+                          )) <= 4`;
+  ```  
+  OracleDB 쿼리문으로 구현. 지구 둘레(6371km)를 원주율과 180°(평면)로 나눈 후, degree 단위를 라디안으로 변환하여 위,경도를 도출하였다.
 
 
 - - -
