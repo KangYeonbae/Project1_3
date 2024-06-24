@@ -337,12 +337,14 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
   + Oracle SQL 과 연결하여 리액트로 회원가입 구현  
 ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/f026cd82-7129-4737-aab6-e5083a078fda)
   1. Oracle SQL에 USERS TABLE 생성
-![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/675ed316-3502-4b44-865e-6b4f1ea820f8)
-  2. 회원가입시 NodeJS Server에서 bcrypt로 비밀번호가 안전하게 해시 처리되어 OracleDB에 적재
 
   + 로그인, 마이페이지 구현
 ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/4f72afbb-c466-4136-87ed-90c72c04765c)
-     ![image](https://github.com/LEEJIWOOE/project4/assets/153358246/fb0e67c4-6be5-4a5b-864d-e1a605c7054c)
+  1. 회원가입시 NodeJS Server에서 bcrypt로 비밀번호가 안전하게 해시 처리되어 OracleDB에 적재
+
+
+
+![image](https://github.com/LEEJIWOOE/project4/assets/153358246/fb0e67c4-6be5-4a5b-864d-e1a605c7054c)
     
   + 마일리지 구현
      ![image](https://github.com/LEEJIWOOE/project4/assets/153358246/1a61291b-d6a8-41f7-8640-2ebe9a4bbbfa)
