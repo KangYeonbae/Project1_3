@@ -333,8 +333,8 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
 ![미세먼지지도](./public/img/lee.gif)
 
 - - -
-+ 회원가입, 로그인, 마이페이지 구현
- - Oracle SQL 과 연결하여 리액트로 회원가입 구현  
+# 회원가입, 로그인, 마이페이지 구현
+ + Oracle SQL 과 연결하여 리액트로 회원가입 구현  
 ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/f026cd82-7129-4737-aab6-e5083a078fda)
   1. Oracle SQL에 USERS TABLE 생성  
 
