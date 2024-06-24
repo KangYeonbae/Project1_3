@@ -1,4 +1,4 @@
-프로젝트 팀장 링크 (https://github.com/KangYeonbae/Project1_3)
+![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/4f72afbb-c466-4136-87ed-90c72c04765c)프로젝트 팀장 링크 (https://github.com/KangYeonbae/Project1_3)
 
 ![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&text=Eco%20Recycl%20Hub!&fontAlignY=40)
 # Eco Recyle Hub(에코 리사이클 허브)
@@ -335,9 +335,7 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
 - - -
 + 로그인,마이페이지 구현
   + oracle SQL 과 연결하여, 리액트로 로그인,마이페이지 구현.
-    ![Uploading image.png…]()  
-
-     ![image](https://github.com/LEEJIWOOE/project4/assets/153358246/fa7d63a0-8bbc-4afa-9598-47bc741098cc)
+![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/ffd8fa69-5497-4457-b158-d5374ccae646)
      ![image](https://github.com/LEEJIWOOE/project4/assets/153358246/fb0e67c4-6be5-4a5b-864d-e1a605c7054c)
     
   + 마일리지 구현
