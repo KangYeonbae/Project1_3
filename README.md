@@ -338,9 +338,15 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
 ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/f026cd82-7129-4737-aab6-e5083a078fda)
   1. Oracle SQL에 USERS TABLE 생성  
 
+  + 회원가입 페이지 구현
+![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/977746b2-0a71-4309-a273-6342b391c1f9)
+  1. 회원가입시 NodeJS Server에서 bcrypt로 비밀번호가 안전하게 해시 처리되어 OracleDB에 적재  
+
   + 로그인, 마이페이지 구현
 ![image](https://github.com/KangYeonbae/Project1_3/assets/153577632/4f72afbb-c466-4136-87ed-90c72c04765c)
-  1. 회원가입시 NodeJS Server에서 bcrypt로 비밀번호가 안전하게 해시 처리되어 OracleDB에 적재  
+  1. 사용자는 로그인 시 올바른 자격 증명을 입력하면 JsonWebToken으로 생성된 JWT를 지급 받는다.
+  2. 사용자가 로그인하면 인증 상태가 True가 되어 JWT 토큰이 로컬 스토리에 저장
+  3. 반대로 로그아웃 시 인증 상태가 False로 설정되어 JWT 토큰이 로컬 스토리에서 제거
 
 
 
