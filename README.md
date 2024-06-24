@@ -371,8 +371,8 @@ https://kosis.kr/search/search.do?query=%ED%8F%90%EA%B8%B0%EB%AC%BC%C2%A0%EB%B0%
                     sin(ROUND(:user_lat, 6) * (3.14159265358979323846 / 180))
                           )) <= 4`;
   ```  
-  OracleDB 쿼리문으로 구현. 지구 둘레(6371km)를 원주율과 180°(평면)로 나눈 후, degree 단위를 라디안으로 변환하여 위,경도를 도출하였다.
-
+  OracleDB 쿼리문으로 구현
+  Haversine 공식을 사용하여 두 점 사이의 대원 거리(4km)를 기준으로 유저 위치기반 4km 이내 가게를 도출
 
 - - -
 ## API
