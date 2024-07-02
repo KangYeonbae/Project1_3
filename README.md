@@ -31,7 +31,6 @@ http://54.82.4.76:3000/
 
 ## 개발 기간
 ###  3차 프로젝트 : 2024.04.05(금) ~ 2024.05.03(금)
-###  4차 프로젝트 : 2024.05.28(수) ~ 2024.06.25(화)
   + 04/05 ~ 04/12
     + 기술 스택 회의
     + 자료 수집과 선정
@@ -62,6 +61,8 @@ http://54.82.4.76:3000/
     + 기타 부가 기능 구현
     + 실시간차트 추가구현
 
+##  4차 프로젝트 : 2024.05.28(수) ~ 2024.06.25(화)
+
   + 05/28
     + 대표포털(네이버) 검색어기준 키워드분석
     + 페르소나 지정    
@@ -86,7 +87,29 @@ http://54.82.4.76:3000/
 ## 프로젝트 아키텍쳐
 
 ## 기능 리뷰
+
+### 메인페이지
+ ```
+페이지의 주요 기능을 모든사용자들이 알아보기 쉽게 되어져있다.
+```
+<img src="public/img/page/main_page1.JPG" alt="gr" width="700">
+<img src="public/img/page/main_page2.JPG" alt="gr" width="700">
+<img src="public/img/page/main_page3.JPG" alt="gr" width="700">
+<img src="public/img/page/main_page5.JPG" alt="gr" width="700">
+<img src="public/img/page/main_page6.JPG" alt="gr" width="700">
+
+
 ### 주요 기능
+
+
+
++ 소개페이지
+<img src="public/img/page/info_page.JPG" alt="info_page" width="700">  
+
+   + AI가 스크립트를 읽어주는 에리허브소개페이지.
+   + 글씨로, 음성으로, 영상으로 설명해주는 에리허브 소개
+
+
 + 지도
    + 페트병수거함, 제로웨이스트, 재활용센터의 위치를 파이썬에서 처리하여 리액트로 송출
    + shp파일(지리적파일)을 가져와 파이썬에서 서버로 송출하여 리액트로 2번 정제 후 지도에 표시
@@ -95,7 +118,14 @@ http://54.82.4.76:3000/
      + 페트병수거함: 해당 사이트에서 웹 스크랩핑 후 csv 파일로 변환하여 파이썬으로 정제
      + 제로웨이스트샵: 사용자가 제작한 구글맵 kml 파일을 가져와 SQL 적재
     
- ![맵](./public/img/페이지.gif)
+### 3차 디자인
+ ![맵](./public/img/페이지.gif) 
+
+
+### 4차 디자인
+<img src="public/img/page/map_page.JPG" alt="gr" width="700">
+<img src="public/img/page/map_page1.JPG" alt="gr" width="700">
+<img src="public/img/page/map_page2.JPG" alt="gr" width="700">
     
  + 길찾기
    + 사용자위치 기반
@@ -123,8 +153,7 @@ http://54.82.4.76:3000/
 + 차트
   + Charths를 이용해 자원순환실천플랫폼에서 제공하는 전국폐기물 발생 및 처리현황 자료를 데이터분석하여 대한민국의 과거 분리배출 결과를 시작적으로 제공한다.
   + 파이차트는 계속하여 움직인다.
-    
- ![차트](./public/img/그래프.png)
+
 
  ![차트](./public/img/그래프1.gif)
 
