@@ -165,7 +165,7 @@ yolov5 : jpg와 text로 된 파일이 필요.
   
 2TB 다운 > 구글드라이브 업로드 > python 을 활용한 데이터 전처리 *5  > 직접 눈으로 확인한 마지막 전처리 > 3000개의 사진자료를 활용한 딥러닝  순으로 진행되었다.  
 
-<img src="public/img/욜로모델학습.jpg" alt="yolo">
+<img src="public/img/yolo1.jpg" alt="yolo">
 <img src="public/img/page/yolo.jpg" alt="yolo">
   
   
